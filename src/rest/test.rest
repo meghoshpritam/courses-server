@@ -1,0 +1,24 @@
+@baseUrl = http://localhost:4000
+
+GET {{baseUrl}}/ HTTP/1.1
+
+###
+
+POST {{baseUrl}}/ HTTP/1.1
+content-type: application/json
+
+{
+  "email": "",
+  "name": ""
+}
+
+###
+# register user with otp
+
+POST {{baseUrl}}/reg HTTP/1.1
+content-type: application/json
+
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoicHJpdGFtIiwiZW1haWwiOiJzaGlibmliYXNoMjFAZ21haWwuY29tIiwiaWF0IjoxNTkyNDI2NjI2LCJleHAiOjE1OTI0MjcyMjZ9.spcXQJkvLicp1DyyoK5oHBaMDoRBFEZHihGmpE3Qpoc",
+  "otp": "356994"
+}
