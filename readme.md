@@ -1,5 +1,7 @@
 # Courses Server
 
+> ⚠ under development 👻
+
 Server with express.js & mongoose
 
 ## Includes
@@ -23,3 +25,5 @@ npm start
 ```
 
 - open in your favorite browser by going [localhost:4000](http://localhost:4000/)
+
+## Client side [checkout](https://github.com/meghoshpritam/courses-client)
