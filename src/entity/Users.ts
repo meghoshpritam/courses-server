@@ -6,7 +6,7 @@ export interface User extends Document {
   active: boolean;
   inactiveMsg?: string;
   role?: string;
-  refreshToken?: string;
+  refreshToken?: string[];
 }
 
 const users = new Schema({
@@ -15,7 +15,7 @@ const users = new Schema({
   active: { type: Boolean, required: false, default: true },
   inactiveMsg: { type: String, required: false },
   role: { type: String, required: false, default: 'student' },
-  refreshToken: { type: String, required: false },
+  refreshToken: [{ type: String, required: false }],
 });
 
 const Users = model<User>('Users', users);

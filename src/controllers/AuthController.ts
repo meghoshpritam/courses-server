@@ -18,18 +18,20 @@ class AuthController {
     id,
     name,
     role,
+    index,
   }: {
     id: number;
     name: string;
     role: string;
+    index: number;
   }): string => {
-    return jwt.sign({ id, name, role }, config.refreshTokenSecret, { expiresIn: '30d' });
+    return jwt.sign({ id, name, role, index }, config.refreshTokenSecret, { expiresIn: '30d' });
   };
 
   static verifyAccessToken = (token: string): boolean | {} => {
     try {
-      jwt.verify(token, config.accessTokenSecret);
-      return jwt.decode(token);
+      const decode = jwt.verify(token, config.accessTokenSecret);
+      return decode;
     } catch (err) {
       return false;
     }
@@ -37,8 +39,8 @@ class AuthController {
 
   static verifyRefreshToken = (token: string): boolean | {} => {
     try {
-      jwt.verify(token, config.refreshTokenSecret);
-      return jwt.decode(token);
+      const decode = jwt.verify(token, config.refreshTokenSecret);
+      return decode;
     } catch (err) {
       return false;
     }

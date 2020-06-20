@@ -42,3 +42,32 @@ content-type: application/json
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNoaWJuaWJhc2gyMUBnbWFpbC5jb20iLCJpYXQiOjE1OTI2MzkwNTksImV4cCI6MTU5MjYzOTY1OX0.VinZ6AjCsvwduSHJUbOZ7IesKLQDk5ZoyamkgrLTBFo",
   "otp": "816332"
 }
+
+###
+# Sign Out
+POST {{baseUrl}}/auth/sign-out HTTP/1.1
+content-type: application/json
+
+{
+  "refreshToken": ""
+}
+
+###
+# Sign Out All
+POST {{baseUrl}}/auth/sign-out-all HTTP/1.1
+content-type: application/json
+
+{
+  "email": ""
+}
+
+###
+# Sign Out All OTP Verification
+
+POST {{baseUrl}}/auth/sign-out-all-otp-verify HTTP/1.1
+content-type: application/json
+
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNoaWJuaWJhc2gyMUBnbWFpbC5jb20iLCJpYXQiOjE1OTI2MzkwNTksImV4cCI6MTU5MjYzOTY1OX0.VinZ6AjCsvwduSHJUbOZ7IesKLQDk5ZoyamkgrLTBFo",
+  "otp": "816332"
+}

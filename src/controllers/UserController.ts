@@ -124,13 +124,14 @@ class UserController {
         id: user._id,
         name: user.name,
         role: user.role,
+        index: 0,
       });
       const accessToken = AuthController.generateAccessToken({
         id: user._id,
         name: user.name,
         role: user.role,
       });
-      user.refreshToken = refreshToken;
+      user.refreshToken[0] = refreshToken;
 
       console.log('user', user);
       await user.save();
@@ -173,11 +174,32 @@ class UserController {
         return;
       }
 
+      let nullIdx = -1;
+      if (user.refreshToken.length >= 2) {
+        for (let idx = 0; idx < user.refreshToken.length; idx++) {
+          if (user.refreshToken[idx] === null) {
+            nullIdx = idx;
+            break;
+          }
+        }
+        if (nullIdx === -1) {
+          error.errors = [
+            { param: 'email', msg: `You can access your account from maximum 3 device!` },
+          ];
+          next(error);
+          return;
+        }
+      }
+
       const otp = generateOtp();
 
-      const token = sign({ email }, config.otpVerificationTokenSecret + otp, {
-        expiresIn: '10m',
-      });
+      const token = sign(
+        { email, index: nullIdx !== -1 ? nullIdx : user.refreshToken.length },
+        config.otpVerificationTokenSecret + otp,
+        {
+          expiresIn: '10m',
+        }
+      );
 
       console.log('otp: ', otp, '\ntoken: ', token);
       const transporter = createTransport({
@@ -211,7 +233,6 @@ class UserController {
     next: NextFunction
   ): Promise<void> => {
     const { token, otp } = req.body;
-
     try {
       let tokenRes: any;
       try {
@@ -227,17 +248,19 @@ class UserController {
       }
 
       const user: User = await Users.findOne({ email: tokenRes.email });
-      let refreshToken: string = user.refreshToken;
 
-      if (!(!!user.refreshToken && !!AuthController.verifyRefreshToken(user.refreshToken))) {
-        refreshToken = AuthController.generateRefreshToken({
-          id: user._id,
-          name: user.name,
-          role: user.role,
-        });
+      let refreshToken = AuthController.generateRefreshToken({
+        id: user._id,
+        name: user.name,
+        role: user.role,
+        index: tokenRes.index,
+      });
 
-        await Users.update({ email: tokenRes.email }, { refreshToken }).exec();
-      }
+      await Users.update(
+        { email: tokenRes.email },
+        { refreshToken: [...user.refreshToken, refreshToken] }
+      ).exec();
+
       const accessToken = AuthController.generateAccessToken({
         id: user._id,
         name: user.name,
@@ -257,7 +280,129 @@ class UserController {
     }
   };
 
-  // TODO: Implement sign out functionality
+  // TODO: Implement sign out functionality instantly
+  /*
+   * Sign out from device
+   */
+  static signOut = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const { refreshToken } = req.body;
+
+    try {
+      const decode: any = AuthController.verifyRefreshToken(refreshToken);
+
+      if (!decode) {
+        const error = {
+          __src__: 'validator',
+          errors: [{ param: 'refreshToken', msg: 'Invalid refresh token' }],
+        };
+
+        next(error);
+        return;
+      }
+
+      const user: User = await Users.findOne({ _id: refreshToken.id }).exec();
+
+      Users.update(
+        { _id: decode.id },
+        {
+          refreshToken: [
+            ...user.refreshToken.map((token) => (token !== refreshToken ? token : null)),
+          ],
+        }
+      );
+
+      res.status(200).json({ msg: 'successfully sign out without 25 hour' });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  /*
+   * Sign out all
+   */
+  static signOutAll = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const { email } = req.body;
+
+    const error: { __src__: string; errors: { param: string; msg: string }[] } = {
+      __src__: 'validator',
+      errors: [],
+    };
+
+    try {
+      const user: User = await Users.findOne({ email });
+
+      if (user === null) {
+        error.errors = [{ param: 'email', msg: 'Email id is not register with us!' }];
+        next(error);
+        return;
+      }
+      if (!user.active) {
+        error.errors = [{ param: 'email', msg: `Account is inactive, ${user.inactiveMsg}` }];
+        next(error);
+        return;
+      }
+
+      const otp = generateOtp();
+
+      const token = sign({ email, id: user._id }, config.signOutAllTokenSecret + otp, {
+        expiresIn: '5m',
+      });
+
+      console.log('otp: ', otp, '\ntoken: ', token);
+      const transporter = createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.EMAIL_ID,
+          pass: process.env.PASSWORD,
+        },
+      });
+      let info = await transporter.sendMail({
+        from: process.env.EMAIL_ID,
+        to: email,
+        subject: 'Sign Out from All Device',
+        text: `Your OTP is: ${otp}. Enter the OTP for register. OTP is valid for 5 minutes.`,
+      });
+
+      res.status(201).json({
+        token,
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  /*
+   * Sign out all otp verification
+   */
+  static signOutAllOtpVerification = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    const { token, otp } = req.body;
+    try {
+      let tokenRes: any;
+      try {
+        tokenRes = verify(token, config.signOutAllTokenSecret + otp);
+      } catch (err) {
+        const error = {
+          __src__: 'validator',
+          errors: [{ param: 'otp', msg: 'Invalid OTP' }],
+        };
+
+        next(error);
+        return;
+      }
+
+      await Users.update({ _id: tokenRes.id }, { refreshToken: null }).exec();
+
+      res.status(200).json({
+        msg: 'Successfully sign out from all device within 25 hour',
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
 
   static toggleActive = {
     validate: [

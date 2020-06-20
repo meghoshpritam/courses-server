@@ -1,4 +1,6 @@
 export default {
+  signOutAllTokenSecret:
+    '5v8x/A?D(G+KbPeShVmYq3t6w9z$B&E)H@McQfTjWnZr4u7x!A%D*G-JaNdRgUkXp2s5v8y/B?E(H+MbPeShVmYq3t6w9z$C&F)J@NcRfTjWnZr4u7x!A%D*G-KaPdSg',
   otpVerificationTokenSecret:
     'MIIBVAIBADANBgkqhkiG9w0BAQEFAASCAT4wggE6AgEAAkEAjBUFJLuXzl32oSnGTtlC75IcoVru0r0FQ+zRWN2VGLzjGCRbxAOw5kcGbtWlAQSYyfjkkmSlpkInCKTtgrnhJwIDAQABAkAkMp5UoqEUs5Uyih/zahLw4znAvEWwcSW2KrDiHMgVTv/+nFRRoMpCTvzL3MQI23c0UF4QlbKEewgqw7QFB5VxAiEAyC/NQO5isMaWq6ElZqKDRMAu9kgvK9ND9fNFzNHW2PkCIQCzI0pJeEwXlVKdbLjQ+dIn6oi6I2Sboyu2lNoeq1wzHwIgDZ+TLFQMy1L4df2lefKdVFRv3brT2vupqFdB7MprAKECIQCNK898TMgygaPEmgyf63B5snOjtQaxPIrTbUTjjImxYwIgCdJ5Pm9OWM8T9jpdgm6IZ7Lq0TYap1e2QbCBi0G6zSc=',
   signUpTokenSecret:
