@@ -4,11 +4,16 @@ import * as cors from 'cors';
 import routes from './routes';
 import { Request, Response, NextFunction } from 'express';
 import { connect } from 'mongoose';
-import connectionString from './config/dbConfig';
+import { config } from 'dotenv';
 
 const bootstrap = async () => {
+  config();
+
   try {
-    await connect(connectionString, { useNewUrlParser: true, useUnifiedTopology: true });
+    await connect(process.env.DB_CONNECTION_STRING, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
 
     const app = express();
 

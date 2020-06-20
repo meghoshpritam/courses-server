@@ -1,6 +1,6 @@
+import { generateOtp } from './../functions/auth';
 import { Response, Request, NextFunction } from 'express';
 import { body, validationResult } from 'express-validator';
-import * as bcrypt from 'bcryptjs';
 import AuthController from './AuthController';
 import Users, { User } from '../entity/Users';
 import { sign, verify, decode } from 'jsonwebtoken';
@@ -29,6 +29,10 @@ class UserController {
     }
   };
 
+  /*
+   * Register with the server, check email is already register or not, if not then generate
+   * otp and send it to email and the token is send to the client
+   */
   static signUp = {
     validate: [
       body('name').not().isEmpty().withMessage('Name is required'),
@@ -65,39 +69,26 @@ class UserController {
         // const user: User = new Users({ name, email });
         // await user.save();
 
-        const otp = (() => {
-          let otp = '';
-          for (let i = 0; i < 6; i++) {
-            otp += Math.floor(Math.random() * 10).toString();
-          }
-          return otp;
-        })();
+        const otp = generateOtp();
 
         const token = sign({ name, email }, config.signUpTokenSecret + otp, {
           expiresIn: '10m',
         });
 
         console.log('otp: ', otp, '\ntoken: ', token);
-        // let testAccount = await createTestAccount();
-        // let transporter = createTransport({
-        //   host: 'smtp.ethereal.email',
-        //   port: 587,
-        //   secure: false, // true for 465, false for other ports
-        //   auth: {
-        //     user: testAccount.user, // generated ethereal user
-        //     pass: testAccount.pass, // generated ethereal password
-        //   },
-        // });
-        // let info = await transporter.sendMail({
-        //   from: '"Fred Foo 👻" <foo@example.com>', // sender address
-        //   to: 'text@text.com', // list of receivers
-        //   subject: 'Register with us :)', // Subject line
-        //   text: `Your OTP is: ${otp}. Enter the OTP for register. OTP is valid for 10minutes.`, // plain text body
-        // });
-
-        // console.log('Message sent: %s', info.messageId);
-
-        // console.log('Preview URL: %s', getTestMessageUrl(info));
+        const transporter = createTransport({
+          service: 'gmail',
+          auth: {
+            user: process.env.EMAIL_ID,
+            pass: process.env.PASSWORD,
+          },
+        });
+        let info = await transporter.sendMail({
+          from: process.env.EMAIL_ID,
+          to: email,
+          subject: 'Register with us :)',
+          text: `Welcome ${name}, Your OTP is: ${otp}. Enter the OTP for register. OTP is valid for 10 minutes.`,
+        });
 
         res.status(201).json({
           token,
@@ -108,7 +99,11 @@ class UserController {
     },
   };
 
-  static register = async (req: Request, res: Response, next: NextFunction) => {
+  /*
+   * take the otp and the token and verify the token with otp if valid then return the access token
+   * and the refresh token and save the refresh token to db
+   */
+  static signUpOTPVerify = async (req: Request, res: Response, next: NextFunction) => {
     const { token, otp } = req.body;
     try {
       let tokenRes: any;
@@ -138,7 +133,7 @@ class UserController {
       user.refreshToken = refreshToken;
 
       console.log('user', user);
-      // await user.save();
+      await user.save();
 
       res.status(201).json({
         name: user.name,
@@ -151,8 +146,13 @@ class UserController {
     }
   };
 
+  /*
+   * Sign in with email and check is email exist and account is active or not, is active send the
+   * otp to the email and token to the clint
+   */
+  // TODO: If old refresh token is exist then create a new one and save it to db and also update the old refresh token whenever ask for new access token maximum 3 signIn possible
   static signIn = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { email, password } = req.body;
+    const { email } = req.body;
 
     const error: { __src__: string; errors: { param: string; msg: string }[] } = {
       __src__: 'validator',
@@ -168,18 +168,67 @@ class UserController {
         return;
       }
       if (!user.active) {
-        error.errors = [{ param: 'email', msg: 'Account is not active' }];
+        error.errors = [{ param: 'email', msg: `Account is inactive, ${user.inactiveMsg}` }];
         next(error);
         return;
       }
 
-      if (!bcrypt.compare(password, user.password)) {
-        error.errors = [{ param: 'password', msg: 'Wrong password' }];
+      const otp = generateOtp();
+
+      const token = sign({ email }, config.otpVerificationTokenSecret + otp, {
+        expiresIn: '10m',
+      });
+
+      console.log('otp: ', otp, '\ntoken: ', token);
+      const transporter = createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.EMAIL_ID,
+          pass: process.env.PASSWORD,
+        },
+      });
+      let info = await transporter.sendMail({
+        from: process.env.EMAIL_ID,
+        to: email,
+        subject: 'Sign In with your account',
+        text: `Your OTP is: ${otp}. Enter the OTP for register. OTP is valid for 10 minutes.`,
+      });
+
+      res.status(201).json({
+        token,
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  /*
+   * verify the otp and the token to sign in and return the access token and refresh token to the user
+   */
+  static signInOTPVerify = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    const { token, otp } = req.body;
+
+    try {
+      let tokenRes: any;
+      try {
+        tokenRes = verify(token, config.otpVerificationTokenSecret + otp);
+      } catch (err) {
+        const error = {
+          __src__: 'validator',
+          errors: [{ param: 'otp', msg: 'Invalid OTP' }],
+        };
+
         next(error);
         return;
       }
 
-      let refreshToken: string;
+      const user: User = await Users.findOne({ email: tokenRes.email });
+      let refreshToken: string = user.refreshToken;
+
       if (!(!!user.refreshToken && !!AuthController.verifyRefreshToken(user.refreshToken))) {
         refreshToken = AuthController.generateRefreshToken({
           id: user._id,
@@ -187,7 +236,7 @@ class UserController {
           role: user.role,
         });
 
-        await Users.update({ email }, { refreshToken }).exec();
+        await Users.update({ email: tokenRes.email }, { refreshToken }).exec();
       }
       const accessToken = AuthController.generateAccessToken({
         id: user._id,
@@ -207,6 +256,8 @@ class UserController {
       next(err);
     }
   };
+
+  // TODO: Implement sign out functionality
 
   static toggleActive = {
     validate: [

@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import UserController from '../controllers/UserController';
+
+import authRouters from './auth';
 
 const routes: Router = Router();
 
-routes.get('/', UserController.get);
-routes.post('/', UserController.signUp.validate, UserController.signUp.controller);
-routes.post('/reg', UserController.register);
+// auth routes
+routes.use('/auth', authRouters);
 
 export default routes;

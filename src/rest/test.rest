@@ -3,22 +3,42 @@
 GET {{baseUrl}}/ HTTP/1.1
 
 ###
-
-POST {{baseUrl}}/ HTTP/1.1
+# Sign Up
+POST {{baseUrl}}/auth/sign-up HTTP/1.1
 content-type: application/json
 
 {
   "email": "",
-  "name": ""
+  "name": "Pritam Ghosh"
 }
 
 ###
-# register user with otp
+# Sign Up otp verify
 
-POST {{baseUrl}}/reg HTTP/1.1
+POST {{baseUrl}}/auth/sign-up-otp-verify HTTP/1.1
 content-type: application/json
 
 {
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoicHJpdGFtIiwiZW1haWwiOiJzaGlibmliYXNoMjFAZ21haWwuY29tIiwiaWF0IjoxNTkyNDI2NjI2LCJleHAiOjE1OTI0MjcyMjZ9.spcXQJkvLicp1DyyoK5oHBaMDoRBFEZHihGmpE3Qpoc",
-  "otp": "356994"
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiUHJpdGFtIEdob3NoIiwiZW1haWwiOiJzaGlibmliYXNoMjFAZ21haWwuY29tIiwiaWF0IjoxNTkyNjMzNzg3LCJleHAiOjE1OTI2MzQzODd9.T4euQfKZimKvUwC3MWACxTpLL6Ec6fgIoLYa5S3ft-4",
+  "otp": "170433"
+}
+
+###
+# Sign In
+POST {{baseUrl}}/auth/sign-in HTTP/1.1
+content-type: application/json
+
+{
+  "email": ""
+}
+
+###
+# Sign In otp verify
+
+POST {{baseUrl}}/auth/sign-in-otp-verify HTTP/1.1
+content-type: application/json
+
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNoaWJuaWJhc2gyMUBnbWFpbC5jb20iLCJpYXQiOjE1OTI2MzkwNTksImV4cCI6MTU5MjYzOTY1OX0.VinZ6AjCsvwduSHJUbOZ7IesKLQDk5ZoyamkgrLTBFo",
+  "otp": "816332"
 }

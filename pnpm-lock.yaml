@@ -1,6 +1,7 @@
 dependencies:
   bcryptjs: 2.4.3
   cors: 2.8.5
+  dotenv: 8.2.0
   express: 4.17.1
   express-rate-limit: 5.1.3
   express-validator: 6.5.0
@@ -735,6 +736,12 @@ packages:
       node: '>=4.0.0'
     resolution:
       integrity: sha512-ZjI4zqTaxveH2/tTlzS1wFp+7ncxNZaIEWYg3lzZRHkKf5zPT/MnEG6WL0BhHMJUabkh8GeU5NL5j+rEUCb7Ug==
+  /dotenv/8.2.0:
+    dev: false
+    engines:
+      node: '>=8'
+    resolution:
+      integrity: sha512-8sJ78ElpbDJBHNeBzUbUVLsqKdccaa/BXF1uPTw3GrvQTBgrQrtObr2mUrE38vzYd8cEv+m/JBfDLioYcfXoaw==
   /dynamic-dedupe/0.3.0:
     dependencies:
       xtend: 4.0.2
@@ -2879,6 +2886,7 @@ specifiers:
   '@typescript-eslint/parser': ^3.3.0
   bcryptjs: ^2.4.3
   cors: ^2.8.5
+  dotenv: ^8.2.0
   eslint: ^7.2.0
   eslint-config-airbnb-base: ^14.2.0
   eslint-config-airbnb-typescript: ^8.0.2
