@@ -7,6 +7,9 @@ export interface User extends Document {
   inactiveMsg?: string;
   role?: string;
   refreshToken?: string[];
+  join: Date;
+  about?: string;
+  avatar?: string;
 }
 
 const users = new Schema({
@@ -16,6 +19,9 @@ const users = new Schema({
   inactiveMsg: { type: String, required: false },
   role: { type: String, required: false, default: 'student' },
   refreshToken: [{ type: String, required: false }],
+  join: { type: Date, required: false, default: Date.now },
+  about: { type: String, required: false },
+  avatar: { type: String, required: false },
 });
 
 const Users = model<User>('Users', users);
