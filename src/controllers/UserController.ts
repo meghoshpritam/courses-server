@@ -175,7 +175,7 @@ class UserController {
       }
 
       let nullIdx = -1;
-      if (user.refreshToken.length >= 2) {
+      if (user.refreshToken.length > 2) {
         for (let idx = 0; idx < user.refreshToken.length; idx++) {
           if (user.refreshToken[idx] === null) {
             nullIdx = idx;
@@ -216,7 +216,7 @@ class UserController {
         text: `Your OTP is: ${otp}. Enter the OTP for register. OTP is valid for 10 minutes.`,
       });
 
-      res.status(201).json({
+      res.status(200).json({
         token,
       });
     } catch (err) {
@@ -267,7 +267,7 @@ class UserController {
         role: user.role,
       });
 
-      res.status(200).json({
+      res.status(201).json({
         name: user.name,
         _id: user._id,
         role: user.role,
