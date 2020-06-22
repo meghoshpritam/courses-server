@@ -1,16 +1,18 @@
 import { Request, Response, NextFunction } from 'express';
 import * as jwt from 'jsonwebtoken';
 import config from '../config/config';
+import AuthController from '../controllers/AuthController';
 
 export const checkAccessToken = (req: Request, res: Response, next: NextFunction) => {
-  //Get the jwt token from the head
   const token = <string>req.headers['authorization'];
 
-  try {
-  } catch (error) {
+  const decode: any = AuthController.verifyAccessToken(token);
+
+  if (!decode) {
     res.status(401).send();
     return;
   }
 
+  res.locals = { ...decode };
   next();
 };
