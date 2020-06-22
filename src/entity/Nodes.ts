@@ -29,8 +29,8 @@ const nodes = new Schema({
   quiz: { type: String, required: false },
   exam: { type: Schema.Types.ObjectId, required: false, ref: 'Exams' },
   updated: { type: Date, required: false, default: Date.now },
-  creator: { type: Schema.Types.ObjectId, required: true },
-  assignment: { type: String, required: false },
+  creator: { type: Schema.Types.ObjectId, required: true, ref: 'Users' },
+  assignment: { type: Schema.Types.ObjectId, required: false, ref: 'Assignments' },
 });
 
 const Nodes = model<Node>('Nodess', nodes);

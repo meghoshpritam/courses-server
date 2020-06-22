@@ -1,0 +1,21 @@
+@baseUrl = http://localhost:4000
+@refreshToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlZWRhYTA3ZGFlNmQzMzlkYTQ2MzU4YiIsIm5hbWUiOiJQcml0YW0gR2hvc2giLCJyb2xlIjoiYWRtaW4iLCJpbmRleCI6MiwiaWF0IjoxNTkyODI0NTk5LCJleHAiOjE1OTU0MTY1OTl9.cwv1hGIonyguyHlidNeF8TiCC6S0osnZfoP4i291Eeo
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlZWRhYTA3ZGFlNmQzMzlkYTQ2MzU4YiIsIm5hbWUiOiJQcml0YW0gR2hvc2giLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTI4MjQ2MDAsImV4cCI6MTU5MjkyMTgwMH0.PI0JQs-gXz_iCp5VNH8pYpchFxevK9tuKVo-Elhtik8
+
+###
+# get all nodes
+
+GET {{baseUrl}}/admin/nodes HTTP/1.1
+Authorization: {{accessToken}}
+
+###
+# add node
+
+POST {{baseUrl}}/admin/nodes HTTP/1.1
+Authorization: {{accessToken}}
+content-type: application/json
+
+{
+
+}
+
