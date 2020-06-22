@@ -20,7 +20,10 @@ class NodeController {
       body('name').not().isEmpty().withMessage('Name is required'),
       body('description').not().isEmpty().withMessage('Description is required'),
       body('img').custom((val, { req }) => {
-        if (val === '' && req.body.video === '') {
+        if (
+          (val === '' || val === undefined) &&
+          (req.body.video === '' || req.body.video === undefined)
+        ) {
           throw new Error('An image is required');
         }
 
@@ -28,12 +31,30 @@ class NodeController {
         return true;
       }),
       body('resources').custom((val) => {
-        if (val.name !== '' && typeof val.name !== 'string') {
-          throw new Error('Name of the resource is required');
+        if (val !== undefined) {
+          if (val?.name !== '' && typeof val.name !== 'string') {
+            throw new Error('Name of the resource is required');
+          }
+          if (val?.uri !== '' && typeof val.uri !== 'string') {
+            throw new Error('URI of the resource is required');
+          }
         }
-        if (val.uri !== '' && typeof val.uri !== 'string') {
-          throw new Error('URI of the resource is required');
+
+        // pass the validation
+        return true;
+      }),
+      body('markdown').custom((val, { req }) => {
+        if (
+          (val === undefined || val === '') &&
+          (req.body.video === undefined || req.body.video === '') &&
+          req.body.resources === undefined &&
+          (req.body.exam === undefined || req.body.exam === '') &&
+          (req.body.quiz === undefined || req.body.quiz === '') &&
+          (req.body.assignment === '' || req.body.assignment === undefined)
+        ) {
+          throw new Error('A Markdown file is needed');
         }
+
         // pass the validation
         return true;
       }),

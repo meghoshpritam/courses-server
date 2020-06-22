@@ -31,6 +31,7 @@ const nodes = new Schema({
   updated: { type: Date, required: false, default: Date.now },
   creator: { type: Schema.Types.ObjectId, required: true, ref: 'Users' },
   assignment: { type: Schema.Types.ObjectId, required: false, ref: 'Assignments' },
+  type: { type: String, required: false, default: 'free' },
 });
 
 const Nodes = model<Node>('Nodess', nodes);

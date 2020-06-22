@@ -16,6 +16,9 @@ Authorization: {{accessToken}}
 content-type: application/json
 
 {
-
+  "name": "C functions",
+  "description": "C function overviews",
+  "img": "https://d1jnx9ba8s6j9r.cloudfront.net/blog/wp-content/uploads/2019/09/Image-Functions-in-C-Edureka.png",
+  "video": "https://www.youtube.com/watch?v=wQMhFBH5cJA"
 }
 
