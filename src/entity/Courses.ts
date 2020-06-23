@@ -52,7 +52,7 @@ const courses = new Schema({
   weWillCover: [{ type: String, required: false }],
   requirements: [{ type: String, required: false }],
   courseFor: [{ type: String, required: false }],
-  resources: [{ name: { type: String, required: false }, uri: { type: String, required: false } }],
+  resources: [{ name: { type: String, required: true }, uri: { type: String, required: true } }],
   price: { type: Number, required: true },
 });
 
