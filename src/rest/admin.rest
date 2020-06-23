@@ -22,3 +22,23 @@ content-type: application/json
   "video": "https://www.youtube.com/watch?v=wQMhFBH5cJA"
 }
 
+###
+# update a node
+
+POST {{baseUrl}}/admin/nodes HTTP/1.1
+Authorization: {{accessToken}}
+content-type: application/json
+
+{
+  "id": "5ef0d55d94828e53574a56ac",
+  "name": "C++ functions",
+  "description": "C function overviews",
+  "img": "https://d1jnx9ba8s6j9r.cloudfront.net/blog/wp-content/uploads/2019/09/Image-Functions-in-C-Edureka.png",
+  "video": "https://www.youtube.com/watch?v=wQMhFBH5cJA"
+}
+
+###
+# delete a node
+
+GET {{baseUrl}}/admin/nodes HTTP/1.1
+Authorization: {{accessToken}}
