@@ -20,10 +20,10 @@ class CourseController {
     body('nodes').custom((val) => {
       if (val !== undefined) {
         if (val?.id !== '' && typeof val.name !== 'string') {
-          throw new Error('Name of the resource is required');
+          throw new Error('Invalid node id type');
         }
         if (val?.chapter !== '' && typeof val.uri !== 'string') {
-          throw new Error('URI of the resource is required');
+          throw new Error('Chapter name is required');
         }
       }
 
@@ -33,10 +33,10 @@ class CourseController {
     body('exams').custom((val) => {
       if (val !== undefined) {
         if (val?.id !== '' && typeof val.name !== 'string') {
-          throw new Error('Name of the resource is required');
+          throw new Error('Invalid exam id type');
         }
         if (val?.chapter !== '' && typeof val.uri !== 'string') {
-          throw new Error('URI of the resource is required');
+          throw new Error('Chapter name is required');
         }
       }
 
@@ -46,10 +46,10 @@ class CourseController {
     body('projects').custom((val) => {
       if (val !== undefined) {
         if (val?.id !== '' && typeof val.name !== 'string') {
-          throw new Error('Name of the resource is required');
+          throw new Error('Invalid project id type');
         }
         if (val?.chapter !== '' && typeof val.uri !== 'string') {
-          throw new Error('URI of the resource is required');
+          throw new Error('Chapter name is required');
         }
       }
 
@@ -59,10 +59,10 @@ class CourseController {
     body('assignments').custom((val) => {
       if (val !== undefined) {
         if (val?.id !== '' && typeof val.name !== 'string') {
-          throw new Error('Name of the resource is required');
+          throw new Error('Invalid assignment id type');
         }
         if (val?.chapter !== '' && typeof val.uri !== 'string') {
-          throw new Error('URI of the resource is required');
+          throw new Error('Chapter name is required');
         }
       }
 
@@ -194,7 +194,6 @@ class CourseController {
       body('id').not().isEmpty().withMessage('ID is required'),
     ],
     controller: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-      const {} = req.body;
       const {
         id,
         name,
@@ -219,7 +218,7 @@ class CourseController {
       }
 
       try {
-        const course: Course = await (await Courses.findOne({ _id: id })).execPopulate();
+        const course: Course = await Courses.findOne({ _id: id }).exec();
         if (course === null) {
           const error = {
             __src__: 'validator',
@@ -253,6 +252,7 @@ class CourseController {
             courseFor,
             resources,
             price,
+            updated: new Date(),
           }
         ).exec();
 
@@ -267,7 +267,7 @@ class CourseController {
     const { id } = req.query;
 
     try {
-      const course: Course = await (await Courses.findOne({ _id: id })).execPopulate();
+      const course: Course = await Courses.findOne({ _id: id }).exec();
 
       if (course === null) {
         const error = {

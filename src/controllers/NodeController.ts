@@ -158,7 +158,6 @@ class NodeController {
       }),
     ],
     controller: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-      const {} = req.body;
       const {
         id,
         name,
@@ -169,7 +168,6 @@ class NodeController {
         resources,
         quiz,
         exam,
-        updated,
         assignment,
       }: Node = req.body;
 
@@ -180,7 +178,7 @@ class NodeController {
       }
 
       try {
-        const node: Node = await (await Nodes.findOne({ _id: id })).execPopulate();
+        const node: Node = await Nodes.findOne({ _id: id }).exec();
         if (node === null) {
           const error = {
             __src__: 'validator',
@@ -209,7 +207,7 @@ class NodeController {
             resources,
             quiz,
             exam,
-            updated,
+            updated: new Date(),
             creator: res.locals.id,
             assignment,
           }
@@ -226,7 +224,7 @@ class NodeController {
     const { id } = req.query;
 
     try {
-      const node: Node = await (await Nodes.findOne({ _id: id })).execPopulate();
+      const node: Node = await Nodes.findOne({ _id: id }).exec();
 
       if (node === null) {
         const error = {

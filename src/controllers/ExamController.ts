@@ -101,6 +101,7 @@ class ExamController {
             uri,
             time,
             marks,
+            updated: new Date(),
           }
         ).exec();
 

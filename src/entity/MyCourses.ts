@@ -5,7 +5,7 @@ interface Obj {
   date: Date;
   price: number;
   transactionId: string;
-  active: boolean;
+  active?: boolean;
   inactiveMsg?: string;
   reference?: string;
 }

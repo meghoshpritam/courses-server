@@ -101,6 +101,7 @@ class AssignmentController {
             uri,
             deadline,
             marks,
+            updated: new Date(),
           }
         ).exec();
 

@@ -5,7 +5,7 @@ export interface Goal extends Document {
   description: string;
   img?: string;
   video?: string;
-  nodes?: string[];
+  courses?: string[];
   exams?: string[];
   projects?: string[];
   assignments?: string[];
@@ -32,7 +32,7 @@ const goals = new Schema({
   weWillCover: [{ type: String, required: false }],
   requirements: [{ type: String, required: false }],
   courseFor: [{ type: String, required: false }],
-  resources: [{ name: { type: String, required: false }, uri: { type: String, required: false } }],
+  resources: [{ name: { type: String, required: true }, uri: { type: String, required: true } }],
   price: { type: Number, required: true },
 });
 
