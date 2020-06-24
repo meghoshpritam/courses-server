@@ -19,8 +19,8 @@ POST {{baseUrl}}/auth/sign-up-otp-verify HTTP/1.1
 content-type: application/json
 
 {
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiUHJpdGFtIEdob3NoIiwiZW1haWwiOiJzaGlibmliYXNoMjFAZ21haWwuY29tIiwiaWF0IjoxNTkyNjMzNzg3LCJleHAiOjE1OTI2MzQzODd9.T4euQfKZimKvUwC3MWACxTpLL6Ec6fgIoLYa5S3ft-4",
-  "otp": "170433"
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiUHJpdGFtIEdob3NoIiwiZW1haWwiOiJzaGlibmliYXNoMjFAZ21haWwuY29tIiwiaWF0IjoxNTkyOTg4NTQ5LCJleHAiOjE1OTI5ODkxNDl9._NAyNXnJu7PVStxco8ptK6NzhrCD4V0CAevWyz3I9io",
+  "otp": "726121"
 }
 
 ###
@@ -39,8 +39,8 @@ POST {{baseUrl}}/auth/sign-in-otp-verify HTTP/1.1
 content-type: application/json
 
 {
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNoaWJuaWJhc2gyMUBnbWFpbC5jb20iLCJpYXQiOjE1OTI2MzkwNTksImV4cCI6MTU5MjYzOTY1OX0.VinZ6AjCsvwduSHJUbOZ7IesKLQDk5ZoyamkgrLTBFo",
-  "otp": "816332"
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNoaWJuaWJhc2gyMUBnbWFpbC5jb20iLCJpbmRleCI6MSwiaWF0IjoxNTkyOTkzMTczLCJleHAiOjE1OTI5OTM3NzN9.zbzvaKfLVxVHFA86P3TDMdNwE4nwBU1bIlbpTb8VV6k",
+  "otp": "032066"
 }
 
 ###
@@ -49,7 +49,7 @@ POST {{baseUrl}}/auth/sign-out HTTP/1.1
 content-type: application/json
 
 {
-  "refreshToken": ""
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlZjMxM2JlYWY1OWYzOTk4YzUzNmFiNiIsIm5hbWUiOiJQcml0YW0gR2hvc2giLCJyb2xlIjoic3R1ZGVudCIsImluZGV4IjoxLCJpYXQiOjE1OTI5ODg4MzYsImV4cCI6MTU5NTU4MDgzNn0.VwyURWA7O03K8GzNdgEE0U5CRgrOcq8YaEzWcZ6XANY"
 }
 
 ###
@@ -70,4 +70,14 @@ content-type: application/json
 {
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNoaWJuaWJhc2gyMUBnbWFpbC5jb20iLCJpYXQiOjE1OTI2MzkwNTksImV4cCI6MTU5MjYzOTY1OX0.VinZ6AjCsvwduSHJUbOZ7IesKLQDk5ZoyamkgrLTBFo",
   "otp": "816332"
+}
+
+###
+# generate access token
+
+POST {{baseUrl}}/auth/generate-access-token HTTP/1.1
+content-type: application/json
+
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlZjMxM2JlYWY1OWYzOTk4YzUzNmFiNiIsIm5hbWUiOiJQcml0YW0gR2hvc2giLCJyb2xlIjoic3R1ZGVudCIsImluZGV4IjowLCJpYXQiOjE1OTI5ODg2MDYsImV4cCI6MTU5NTU4MDYwNn0.IQVoATojpx76-3bIUg1blDh9l_eh9zlj995rq9CybzM"
 }

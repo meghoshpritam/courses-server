@@ -239,7 +239,7 @@ class NodeController {
       }
 
       if (node.creator.toString() !== res.locals.id) {
-        res.status(401).send();
+        res.status(401).end();
         return;
       }
 

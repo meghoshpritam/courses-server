@@ -256,9 +256,12 @@ class UserController {
         index: tokenRes.index,
       });
 
+      user.refreshToken[tokenRes.index] = refreshToken;
+      console.log('let test', user.refreshToken);
+
       await Users.update(
         { email: tokenRes.email },
-        { refreshToken: [...user.refreshToken, refreshToken] }
+        { refreshToken: [...user.refreshToken.slice(0, 3)] }
       ).exec();
 
       const accessToken = AuthController.generateAccessToken({
@@ -300,16 +303,26 @@ class UserController {
         return;
       }
 
-      const user: User = await Users.findOne({ _id: refreshToken.id }).exec();
+      const user: User = await Users.findOne({ _id: decode.id }).exec();
 
-      Users.update(
+      if (user.refreshToken.indexOf(refreshToken) === -1) {
+        const error = {
+          __src__: 'validator',
+          errors: [{ param: 'refreshToken', msg: 'Invalid refresh token' }],
+        };
+
+        next(error);
+        return;
+      }
+
+      await Users.update(
         { _id: decode.id },
         {
           refreshToken: [
-            ...user.refreshToken.map((token) => (token !== refreshToken ? token : null)),
+            ...user.refreshToken.map((token) => (token === refreshToken ? null : token)),
           ],
         }
-      );
+      ).exec();
 
       res.status(200).json({ msg: 'successfully sign out without 25 hour' });
     } catch (err) {
@@ -443,6 +456,44 @@ class UserController {
         next(err);
       }
     },
+  };
+  static generateAccessToken = async (req: Request, res: Response, next: NextFunction) => {
+    const { refreshToken } = req.body;
+
+    try {
+      const decode: any = AuthController.verifyRefreshToken(refreshToken);
+
+      if (!decode) {
+        console.log('decodeeee');
+
+        res.status(401).end();
+        return;
+      }
+
+      console.log('decode ', decode);
+
+      const user: User = await Users.findOne({ _id: decode.id });
+
+      if (!user) {
+        res.status(401).end();
+        return;
+      }
+
+      if (refreshToken !== user.refreshToken[decode.index]) {
+        res.status(401).end();
+        return;
+      }
+
+      const accessToken = AuthController.generateAccessToken({
+        id: user._id,
+        name: user.name,
+        role: user.role,
+      });
+
+      res.status(200).json({ accessToken });
+    } catch (err) {
+      next(err);
+    }
   };
 
   // static update = {

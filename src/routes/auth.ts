@@ -62,4 +62,7 @@ routes.post('/sign-out-all', UserController.signOutAll);
 // sign out all otp verification
 routes.post('/sign-out-all-otp-verify', UserController.signOutAllOtpVerification);
 
+// generate access token
+routes.post('/generate-access-token', UserController.generateAccessToken);
+
 export default routes;

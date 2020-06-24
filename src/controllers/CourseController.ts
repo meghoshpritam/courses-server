@@ -218,7 +218,7 @@ class CourseController {
         if (course.creator.toString() !== res.locals.id) {
           console.log('oops!');
 
-          res.status(401).send();
+          res.status(401).end();
           return;
         }
 

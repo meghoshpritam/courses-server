@@ -9,7 +9,7 @@ export const checkAccessToken = (req: Request, res: Response, next: NextFunction
   const decode: any = AuthController.verifyAccessToken(token);
 
   if (!decode) {
-    res.status(401).send();
+    res.status(401).end();
     return;
   }
 
