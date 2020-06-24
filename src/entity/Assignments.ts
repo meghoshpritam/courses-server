@@ -7,7 +7,7 @@ export interface Assignment extends Document {
   creator: string;
   updated?: Date;
   deadline?: number;
-  marls?: number;
+  marks?: number;
 }
 
 const assignment = new Schema({

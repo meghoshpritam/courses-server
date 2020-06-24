@@ -83,6 +83,7 @@ class CourseController {
       return true;
     }),
     body('price')
+      .not()
       .isEmpty()
       .withMessage('Price is required')
       .toFloat()
@@ -111,8 +112,22 @@ class CourseController {
           path: 'nodes',
           populate: { path: 'id', populate: { path: 'creator', select: '-refreshToken -email' } },
         })
-        // .populate({ path: 'exam' })
-        // .populate({ path: 'assignment' })
+        // .populate({
+        //   path: 'exams',
+        //   populate: { path: 'id', populate: { path: 'creator', select: '-refreshToken -email' } },
+        // })
+        // .populate({
+        //   path: 'projects',
+        //   populate: { path: 'id', populate: { path: 'creator', select: '-refreshToken -email' } },
+        // })
+        // .populate({
+        //   path: 'assignments',
+        //   populate: { path: 'id', populate: { path: 'creator', select: '-refreshToken -email' } },
+        // })
+        .populate({
+          path: 'creator',
+          select: '-refreshToken -email',
+        })
         .exec();
       // TODO: test and fix populate
       res.status(200).json({ courses });
@@ -164,7 +179,7 @@ class CourseController {
           creator: res.locals.id,
         });
 
-        course.save();
+        await course.save();
 
         res.status(201).end();
       } catch (err) {

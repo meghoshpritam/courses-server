@@ -48,7 +48,7 @@ const courses = new Schema({
     },
   ],
   updated: { type: Date, required: false, default: Date.now },
-  creator: { type: Schema.Types.ObjectId, required: true },
+  creator: { type: Schema.Types.ObjectId, required: true, ref: 'Users' },
   weWillCover: [{ type: String, required: false }],
   requirements: [{ type: String, required: false }],
   courseFor: [{ type: String, required: false }],

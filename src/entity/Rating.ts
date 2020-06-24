@@ -3,7 +3,7 @@ import { Schema, model, Document } from 'mongoose';
 interface Obj {
   id: string;
   rating: number;
-  comment: string;
+  comment?: string;
   date: Date;
 }
 

@@ -1,6 +1,6 @@
 @baseUrl = http://localhost:4000
-@refreshToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlZWRhYTA3ZGFlNmQzMzlkYTQ2MzU4YiIsIm5hbWUiOiJQcml0YW0gR2hvc2giLCJyb2xlIjoiYWRtaW4iLCJpbmRleCI6MiwiaWF0IjoxNTkyODI0NTk5LCJleHAiOjE1OTU0MTY1OTl9.cwv1hGIonyguyHlidNeF8TiCC6S0osnZfoP4i291Eeo
-@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlZWRhYTA3ZGFlNmQzMzlkYTQ2MzU4YiIsIm5hbWUiOiJQcml0YW0gR2hvc2giLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTI4MjQ2MDAsImV4cCI6MTU5MjkyMTgwMH0.PI0JQs-gXz_iCp5VNH8pYpchFxevK9tuKVo-Elhtik8
+@refreshToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlZjMxM2JlYWY1OWYzOTk4YzUzNmFiNiIsIm5hbWUiOiJQcml0YW0gR2hvc2giLCJyb2xlIjoic3R1ZGVudCIsImluZGV4IjowLCJpYXQiOjE1OTI5ODg2MDYsImV4cCI6MTU5NTU4MDYwNn0.IQVoATojpx76-3bIUg1blDh9l_eh9zlj995rq9CybzM
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlZjMxM2JlYWY1OWYzOTk4YzUzNmFiNiIsIm5hbWUiOiJQcml0YW0gR2hvc2giLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTI5OTQ1ODYsImV4cCI6MTU5MzA5MTc4Nn0.ixpHw5I3Z3rBLiOk4TvnpcKDeijHP9T8nMZf5NCs76M
 
 ###
 # get all nodes
@@ -41,4 +41,47 @@ content-type: application/json
 # delete a node
 
 GET {{baseUrl}}/admin/nodes HTTP/1.1
+Authorization: {{accessToken}}
+
+###
+#################################### course ######################################
+# get courses
+
+GET {{baseUrl}}/admin/courses HTTP/1.1
+Authorization: {{accessToken}}
+
+###
+# add course
+
+POST {{baseUrl}}/admin/courses HTTP/1.1
+Authorization: {{accessToken}}
+content-type: application/json
+
+{
+  "name": "C functionsa",
+  "description": "C function overviews",
+  "img": "https://d1jnx9ba8s6j9r.cloudfront.net/blog/wp-content/uploads/2019/09/Image-Functions-in-C-Edureka.png",
+  "video": "https://www.youtube.com/watch?v=wQMhFBH5cJA",
+  "price": 25
+}
+
+###
+# update a course
+
+POST {{baseUrl}}/admin/courses HTTP/1.1
+Authorization: {{accessToken}}
+content-type: application/json
+
+{
+  "id": "5ef0d55d94828e53574a56ac",
+  "name": "C++ functions",
+  "description": "C function overviews",
+  "img": "https://d1jnx9ba8s6j9r.cloudfront.net/blog/wp-content/uploads/2019/09/Image-Functions-in-C-Edureka.png",
+  "video": "https://www.youtube.com/watch?v=wQMhFBH5cJA"
+}
+
+###
+# delete a courses
+
+GET {{baseUrl}}/admin/courses HTTP/1.1
 Authorization: {{accessToken}}

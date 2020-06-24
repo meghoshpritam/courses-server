@@ -34,6 +34,6 @@ const nodes = new Schema({
   type: { type: String, required: false, default: 'free' },
 });
 
-const Nodes = model<Node>('Nodess', nodes);
+const Nodes = model<Node>('Nodes', nodes);
 
 export default Nodes;

@@ -7,7 +7,7 @@ export interface Exam extends Document {
   creator: string;
   updated?: Date;
   time?: number;
-  marls?: number;
+  marks?: number;
 }
 
 const exams = new Schema({
