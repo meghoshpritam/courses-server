@@ -33,6 +33,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.19",
     "nodemailer": "^6.4.10",
+    "razorpay": "^2.0.6",
     "ts-node-dev": "^1.0.0-pre.49"
   },
   "scripts": {
