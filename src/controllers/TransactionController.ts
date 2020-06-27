@@ -11,7 +11,7 @@ class TransactionController {
 
   public static createOrder = async (req: Request, res: Response, next: NextFunction) => {
     const { courseId, projectId, goalId } = req.body;
-    console.log(Razorpay);
+
     try {
       const amount = 20;
 
