@@ -17,14 +17,14 @@ class ExamController {
         query = { ...query, _id: id };
       }
 
-      const courses: Exam[] = await Exams.find(query)
+      const exams: Exam[] = await Exams.find(query)
         .populate({
           path: 'creator',
           select: '-refreshToken -email',
         })
         .exec();
 
-      res.status(200).json({ courses });
+      res.status(200).json({ exams });
     } catch (err) {
       next(err);
     }

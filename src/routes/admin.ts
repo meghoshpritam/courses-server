@@ -1,11 +1,13 @@
 import { Router } from 'express';
 import NodeController from '../controllers/NodeController';
 import CourseController from '../controllers/CourseController';
+import AssignmentController from '../controllers/AssignmentController';
+import ExamController from '../controllers/ExamController';
+import ProjectController from '../controllers/ProjectController';
 
 const routes: Router = Router();
 
 /************************************ Nodes ******************************************/
-
 // get all nodes
 routes.get('/nodes', NodeController.get);
 
@@ -30,5 +32,52 @@ routes.put('/courses', CourseController.update.validate, CourseController.update
 
 // delete a course
 routes.delete('/courses', CourseController.delete);
+
+/************************************ Assignments ******************************************/
+// get all assignments
+routes.get('/assignments', AssignmentController.get);
+
+// add a assignment
+routes.post(
+  '/assignments',
+  AssignmentController.post.validate,
+  AssignmentController.post.controller
+);
+
+// update a assignment
+routes.put(
+  '/assignments',
+  AssignmentController.update.validate,
+  AssignmentController.update.controller
+);
+
+// delete a assignment
+routes.delete('/assignments', AssignmentController.delete);
+
+/************************************ Exams ******************************************/
+// get all exams
+routes.get('/exams', ExamController.get);
+
+// add a exam
+routes.post('/exams', AssignmentController.post.validate, ExamController.post.controller);
+
+// update a exam
+routes.put('/exams', ExamController.update.validate, ExamController.update.controller);
+
+// delete a exam
+routes.delete('/exams', ExamController.delete);
+
+/************************************ Projects ******************************************/
+// get all projects
+routes.get('/projects', ProjectController.get);
+
+// add a project
+routes.post('/projects', ProjectController.post.validate, ProjectController.post.controller);
+
+// update a project
+routes.put('/projects', ProjectController.update.validate, ProjectController.update.controller);
+
+// delete a project
+routes.delete('/projects', ProjectController.delete);
 
 export default routes;

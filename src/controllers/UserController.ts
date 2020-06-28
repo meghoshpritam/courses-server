@@ -407,7 +407,7 @@ class UserController {
         return;
       }
 
-      await Users.update({ _id: tokenRes.id }, { refreshToken: null }).exec();
+      await Users.update({ _id: tokenRes.id }, { refreshToken: [] }).exec();
 
       res.status(200).json({
         msg: 'Successfully sign out from all device within 25 hour',

@@ -17,66 +17,77 @@ class CourseController {
       // pass the validation
       return true;
     }),
-    body('nodes').custom((val) => {
-      if (val !== undefined) {
-        if (val?.id !== '' && typeof val.name !== 'string') {
-          throw new Error('Invalid node id type');
-        }
-        if (val?.chapter !== '' && typeof val.uri !== 'string') {
-          throw new Error('Chapter name is required');
-        }
+    body('nodes').custom((vals) => {
+      console.log('notes value: ', vals);
+      if (vals !== undefined) {
+        vals?.forEach((val: { id?: string; chapter?: string }) => {
+          if (val?.id === '' || typeof val?.id !== 'string') {
+            throw new Error('Invalid node id type');
+          }
+          if (val?.chapter === '' || typeof val?.chapter !== 'string') {
+            throw new Error('Chapter name is required');
+          }
+        });
       }
 
       // pass the validation
       return true;
     }),
-    body('exams').custom((val) => {
-      if (val !== undefined) {
-        if (val?.id !== '' && typeof val.name !== 'string') {
-          throw new Error('Invalid exam id type');
-        }
-        if (val?.chapter !== '' && typeof val.uri !== 'string') {
-          throw new Error('Chapter name is required');
-        }
+    body('exams').custom((vals) => {
+      if (vals !== undefined) {
+        vals?.forEach((val: { id?: string; chapter?: string }) => {
+          if (val?.id === '' || typeof val?.id !== 'string') {
+            throw new Error('Invalid exam id type');
+          }
+          if (val?.chapter === '' || typeof val?.chapter !== 'string') {
+            throw new Error('Chapter exam is required');
+          }
+        });
       }
 
       // pass the validation
       return true;
     }),
-    body('projects').custom((val) => {
-      if (val !== undefined) {
-        if (val?.id !== '' && typeof val.name !== 'string') {
-          throw new Error('Invalid project id type');
-        }
-        if (val?.chapter !== '' && typeof val.uri !== 'string') {
-          throw new Error('Chapter name is required');
-        }
+    body('projects').custom((vals) => {
+      if (vals !== undefined) {
+        vals?.forEach((val: { id?: string; chapter?: string }) => {
+          if (val?.id === '' || typeof val?.id !== 'string') {
+            throw new Error('Invalid project id type');
+          }
+          if (val?.chapter === '' || typeof val?.chapter !== 'string') {
+            throw new Error('Chapter project is required');
+          }
+        });
       }
 
       // pass the validation
       return true;
     }),
-    body('assignments').custom((val) => {
-      if (val !== undefined) {
-        if (val?.id !== '' && typeof val.name !== 'string') {
-          throw new Error('Invalid assignment id type');
-        }
-        if (val?.chapter !== '' && typeof val.uri !== 'string') {
-          throw new Error('Chapter name is required');
-        }
+    body('assignments').custom((vals) => {
+      if (vals !== undefined) {
+        vals?.forEach((val: { id?: string; chapter?: string }) => {
+          if (val?.id === '' || typeof val?.id !== 'string') {
+            throw new Error('Invalid assignment id type');
+          }
+          if (val?.chapter === '' || typeof val?.chapter !== 'string') {
+            throw new Error('Chapter assignment is required');
+          }
+        });
       }
 
       // pass the validation
       return true;
     }),
-    body('resources').custom((val) => {
-      if (val !== undefined) {
-        if (val?.name !== '' && typeof val.name !== 'string') {
-          throw new Error('Name of the resource is required');
-        }
-        if (val?.uri !== '' && typeof val.uri !== 'string') {
-          throw new Error('URI of the resource is required');
-        }
+    body('resources').custom((vals) => {
+      if (vals !== undefined) {
+        vals?.forEach((val: { name?: string; uri?: string }) => {
+          if (val?.name === '' || typeof val?.name !== 'string') {
+            throw new Error('Invalid resource id type');
+          }
+          if (val?.uri === '' || typeof val?.uri !== 'string') {
+            throw new Error('Resource URI is required');
+          }
+        });
       }
 
       // pass the validation
@@ -112,18 +123,18 @@ class CourseController {
           path: 'nodes',
           populate: { path: 'id', populate: { path: 'creator', select: '-refreshToken -email' } },
         })
-        // .populate({
-        //   path: 'exams',
-        //   populate: { path: 'id', populate: { path: 'creator', select: '-refreshToken -email' } },
-        // })
+        .populate({
+          path: 'exams',
+          populate: { path: 'id', populate: { path: 'creator', select: '-refreshToken -email' } },
+        })
         // .populate({
         //   path: 'projects',
         //   populate: { path: 'id', populate: { path: 'creator', select: '-refreshToken -email' } },
         // })
-        // .populate({
-        //   path: 'assignments',
-        //   populate: { path: 'id', populate: { path: 'creator', select: '-refreshToken -email' } },
-        // })
+        .populate({
+          path: 'assignments',
+          populate: { path: 'id', populate: { path: 'creator', select: '-refreshToken -email' } },
+        })
         .populate({
           path: 'creator',
           select: '-refreshToken -email',
@@ -243,14 +254,14 @@ class CourseController {
             description,
             img,
             video,
-            nodes,
-            exams,
-            projects,
-            assignments,
-            weWillCover,
-            requirements,
-            courseFor,
-            resources,
+            nodes: nodes || [],
+            exams: exams || [],
+            projects: projects || [],
+            assignments: assignments || [],
+            weWillCover: weWillCover || [],
+            requirements: requirements || [],
+            courseFor: courseFor || [],
+            resources: resources || [],
             price,
             updated: new Date(),
           }

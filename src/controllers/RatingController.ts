@@ -100,7 +100,7 @@ class RatingController {
         })
         .exec();
 
-      res.status(200).json({ courses: rating });
+      res.status(200).json({ rating });
     } catch (err) {
       next(err);
     }

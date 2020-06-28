@@ -17,14 +17,14 @@ class AssignmentController {
         query = { ...query, _id: id };
       }
 
-      const courses: Assignment[] = await Assignments.find(query)
+      const assignments: Assignment[] = await Assignments.find(query)
         .populate({
           path: 'creator',
           select: '-refreshToken -email',
         })
         .exec();
 
-      res.status(200).json({ courses });
+      res.status(200).json({ assignments });
     } catch (err) {
       next(err);
     }

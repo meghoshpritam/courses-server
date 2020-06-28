@@ -26,7 +26,6 @@ const bootstrap = async () => {
     app.use((err: any, req: Request, res: Response, next: NextFunction): void => {
       console.log('errrorrrr: ', err);
       if (err.__src__ === 'express-validator') {
-        console.log(err);
         res.status(422).json({ errors: err.errors.array() });
       } else if (err.__src__ === 'validator') {
         res.status(422).json({ errors: err.errors });

@@ -78,7 +78,7 @@ class GoalController {
         })
         .exec();
       // TODO: test and fix populate
-      res.status(200).json({ courses: goals });
+      res.status(200).json({ goals });
     } catch (err) {
       next(err);
     }
