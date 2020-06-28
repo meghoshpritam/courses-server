@@ -127,10 +127,10 @@ class CourseController {
           path: 'exams',
           populate: { path: 'id', populate: { path: 'creator', select: '-refreshToken -email' } },
         })
-        // .populate({
-        //   path: 'projects',
-        //   populate: { path: 'id', populate: { path: 'creator', select: '-refreshToken -email' } },
-        // })
+        .populate({
+          path: 'projects',
+          populate: { path: 'id', populate: { path: 'creator', select: '-refreshToken -email' } },
+        })
         .populate({
           path: 'assignments',
           populate: { path: 'id', populate: { path: 'creator', select: '-refreshToken -email' } },

@@ -4,6 +4,7 @@ import CourseController from '../controllers/CourseController';
 import AssignmentController from '../controllers/AssignmentController';
 import ExamController from '../controllers/ExamController';
 import ProjectController from '../controllers/ProjectController';
+import GoalController from '../controllers/GoalController';
 
 const routes: Router = Router();
 
@@ -79,5 +80,18 @@ routes.put('/projects', ProjectController.update.validate, ProjectController.upd
 
 // delete a project
 routes.delete('/projects', ProjectController.delete);
+
+/************************************ Goals ******************************************/
+// get all goals
+routes.get('/goals', GoalController.get);
+
+// add a goal
+routes.post('/goals', GoalController.post.validate, GoalController.post.controller);
+
+// update a goal
+routes.put('/goals', GoalController.update.validate, GoalController.update.controller);
+
+// delete a goal
+routes.delete('/goals', GoalController.delete);
 
 export default routes;

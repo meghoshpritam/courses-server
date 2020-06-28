@@ -17,14 +17,65 @@ class GoalController {
       // pass the validation
       return true;
     }),
-    body('resources').custom((val) => {
-      if (val !== undefined) {
-        if (val?.name !== '' && typeof val.name !== 'string') {
-          throw new Error('Name of the resource is required');
-        }
-        if (val?.uri !== '' && typeof val.uri !== 'string') {
-          throw new Error('URI of the resource is required');
-        }
+    body('courses').custom((vals) => {
+      console.log('notes value: ', vals);
+      if (vals !== undefined) {
+        vals?.forEach((val: string) => {
+          if (val === '' || typeof val !== 'string') {
+            throw new Error('Invalid Course id');
+          }
+        });
+      }
+
+      // pass the validation
+      return true;
+    }),
+    body('exams').custom((vals) => {
+      if (vals !== undefined) {
+        vals?.forEach((val: { id?: string; chapter?: string }) => {
+          if (val === '' || typeof val !== 'string') {
+            throw new Error('Invalid Exam id');
+          }
+        });
+      }
+
+      // pass the validation
+      return true;
+    }),
+    body('projects').custom((vals) => {
+      if (vals !== undefined) {
+        vals?.forEach((val: { name?: string; uri?: string; chapter?: string }) => {
+          if (val === '' || typeof val !== 'string') {
+            throw new Error('Invalid Project id');
+          }
+        });
+      }
+
+      // pass the validation
+      return true;
+    }),
+    body('assignments').custom((vals) => {
+      if (vals !== undefined) {
+        vals?.forEach((val: { id?: string; chapter?: string }) => {
+          if (val === '' || typeof val !== 'string') {
+            throw new Error('Invalid Assignment id');
+          }
+        });
+      }
+
+      // pass the validation
+      return true;
+    }),
+    body('resources').custom((vals) => {
+      if (vals !== undefined) {
+        vals?.forEach((val: { name?: string; uri?: string }) => {
+          if (val?.name === '' || typeof val?.name !== 'string') {
+            throw new Error('Invalid resource id type');
+          }
+          if (val?.uri === '' || typeof val?.uri !== 'string') {
+            throw new Error('Resource URI is required');
+          }
+        });
       }
 
       // pass the validation
@@ -57,21 +108,21 @@ class GoalController {
 
       const goals: Goal[] = await Goals.find(query)
         .populate({
-          path: 'nodes',
-          populate: { path: 'id', populate: { path: 'creator', select: '-refreshToken -email' } },
+          path: 'courses',
+          populate: { path: 'creator', select: '-refreshToken -email' },
         })
-        // .populate({
-        //   path: 'exams',
-        //   populate: { path: 'id', populate: { path: 'creator', select: '-refreshToken -email' } },
-        // })
-        // .populate({
-        //   path: 'projects',
-        //   populate: { path: 'id', populate: { path: 'creator', select: '-refreshToken -email' } },
-        // })
-        // .populate({
-        //   path: 'assignments',
-        //   populate: { path: 'id', populate: { path: 'creator', select: '-refreshToken -email' } },
-        // })
+        .populate({
+          path: 'exams',
+          populate: { path: 'creator', select: '-refreshToken -email' },
+        })
+        .populate({
+          path: 'projects',
+          populate: { path: 'creator', select: '-refreshToken -email' },
+        })
+        .populate({
+          path: 'assignments',
+          populate: { path: 'creator', select: '-refreshToken -email' },
+        })
         .populate({
           path: 'creator',
           select: '-refreshToken -email',
@@ -191,14 +242,14 @@ class GoalController {
             description,
             img,
             video,
-            courses,
-            exams,
-            projects,
-            assignments,
-            weWillCover,
-            requirements,
-            courseFor,
-            resources,
+            courses: courses || [],
+            exams: exams || [],
+            projects: projects || [],
+            assignments: assignments || [],
+            weWillCover: weWillCover || [],
+            requirements: requirements || [],
+            courseFor: courseFor || [],
+            resources: resources || [],
             price,
             updated: new Date(),
           }

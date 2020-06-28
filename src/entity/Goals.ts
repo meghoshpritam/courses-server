@@ -28,7 +28,7 @@ const goals = new Schema({
   projects: [{ type: Schema.Types.ObjectId, ref: 'Projects', required: false }],
   assignments: [{ type: Schema.Types.ObjectId, ref: 'Assignments', required: false }],
   updated: { type: Date, required: false, default: Date.now },
-  creator: { type: Schema.Types.ObjectId, required: true },
+  creator: { type: Schema.Types.ObjectId, ref: 'Users', required: true },
   weWillCover: [{ type: String, required: false }],
   requirements: [{ type: String, required: false }],
   courseFor: [{ type: String, required: false }],
