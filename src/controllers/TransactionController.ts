@@ -35,6 +35,23 @@ class TransactionController {
         }
 
         if (goal) {
+          if (goal.price === 0) {
+            try {
+              await MyCourseController.add({
+                user: res.locals.id,
+                goal: {
+                  id: goalId,
+                  price: goal.price,
+                  transactionId: null,
+                  orderId: null,
+                },
+              });
+            } catch (e) {
+              next(e);
+            }
+            res.status(200).json({ msg: 'Goal enrolled' });
+            return;
+          }
           data = await TransactionController.instance.orders.create({
             amount: goal.price * 100,
             currency: 'INR',
@@ -55,6 +72,23 @@ class TransactionController {
         }
 
         if (course) {
+          if (course.price === 0) {
+            try {
+              await MyCourseController.add({
+                user: res.locals.id,
+                course: {
+                  id: courseId,
+                  price: course.price,
+                  transactionId: null,
+                  orderId: null,
+                },
+              });
+            } catch (e) {
+              next(e);
+            }
+            res.status(200).json({ msg: 'Course enrolled' });
+            return;
+          }
           data = await TransactionController.instance.orders.create({
             amount: course.price * 100,
             currency: 'INR',
@@ -75,6 +109,23 @@ class TransactionController {
         }
 
         if (project) {
+          if (project.price === 0) {
+            try {
+              await MyCourseController.add({
+                user: res.locals.id,
+                goal: {
+                  id: projectId,
+                  price: project.price,
+                  transactionId: null,
+                  orderId: null,
+                },
+              });
+            } catch (e) {
+              next(e);
+            }
+            res.status(200).json({ msg: 'Project enrolled' });
+            return;
+          }
           data = await TransactionController.instance.orders.create({
             amount: project.price * 100,
             currency: 'INR',

@@ -2,7 +2,7 @@ import { body, validationResult } from 'express-validator';
 import { Response, Request, NextFunction } from 'express';
 import MyCourses, { MyCourse } from '../entity/MyCourses';
 
-interface objType {
+interface ObjType {
   id: string;
   price: number;
   transactionId: string;
@@ -11,69 +11,6 @@ interface objType {
 }
 
 class MyCourseController {
-  static writeValidation = [
-    body('goals').custom((value) => {
-      if (value !== undefined) {
-        if (value.id === '' || value.id === undefined) {
-          throw new Error('Goal id is required');
-        }
-        if (value.price === '' || value.rating === undefined) {
-          throw new Error('Price id required');
-        } else {
-          if (value.price < 1) {
-            throw new Error('Minimum rating is 0');
-          }
-        }
-        if (value.transactionId === '' || value.transactionId === undefined) {
-          throw new Error('Transaction id is required');
-        }
-      }
-
-      // pass the validation
-      return true;
-    }),
-    body('courses').custom((value) => {
-      if (value !== undefined) {
-        if (value.id === '' || value.id === undefined) {
-          throw new Error('Courses id is required');
-        }
-        if (value.price === '' || value.rating === undefined) {
-          throw new Error('Price id required');
-        } else {
-          if (value.price < 1) {
-            throw new Error('Minimum rating is 0');
-          }
-        }
-        if (value.transactionId === '' || value.transactionId === undefined) {
-          throw new Error('Transaction id is required');
-        }
-      }
-
-      // pass the validation
-      return true;
-    }),
-    body('projects').custom((value) => {
-      if (value !== undefined) {
-        if (value.id === '' || value.id === undefined) {
-          throw new Error('Project id is required');
-        }
-        if (value.price === '' || value.rating === undefined) {
-          throw new Error('Price id required');
-        } else {
-          if (value.price < 1) {
-            throw new Error('Minimum rating is 0');
-          }
-        }
-        if (value.transactionId === '' || value.transactionId === undefined) {
-          throw new Error('Transaction id is required');
-        }
-      }
-
-      // pass the validation
-      return true;
-    }),
-  ];
-
   public static get = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { id } = req.query;
     console.log('id', id);
@@ -121,9 +58,9 @@ class MyCourseController {
     course,
   }: {
     user: string;
-    goal?: objType;
-    project?: objType;
-    course?: objType;
+    goal?: ObjType;
+    project?: ObjType;
+    course?: ObjType;
   }) => {
     console.log('...myCourses ', user, course, goal, project);
     try {
