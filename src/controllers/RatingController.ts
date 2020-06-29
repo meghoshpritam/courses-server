@@ -1,10 +1,11 @@
 import { body, validationResult } from 'express-validator';
 import { Response, Request, NextFunction } from 'express';
 import Ratings, { Rating } from '../entity/Rating';
+import MyCourses, { MyCourse } from '../entity/MyCourses';
 
 class RatingController {
   static writeValidation = [
-    body('goals').custom((value) => {
+    body('goal').custom((value, { req }) => {
       if (value !== undefined) {
         if (value.id === '' || value.id === undefined) {
           throw new Error('Goal id is required');
@@ -21,10 +22,17 @@ class RatingController {
         }
       }
 
+      if (
+        (!req.body.project || req.body.project === '') &&
+        (!req.body.course || req.body.course === '')
+      ) {
+        throw new Error('Goal or project or course rating is required');
+      }
+
       // pass the validation
       return true;
     }),
-    body('projects').custom((value) => {
+    body('project').custom((value) => {
       if (value !== undefined) {
         if (value.id === '' || value.id === undefined) {
           throw new Error('Project id is required');
@@ -44,7 +52,7 @@ class RatingController {
       // pass the validation
       return true;
     }),
-    body('courses').custom((value) => {
+    body('course').custom((value) => {
       if (value !== undefined) {
         if (value.id === '' || value.id === undefined) {
           throw new Error('Courses id is required');
@@ -109,7 +117,7 @@ class RatingController {
   public static postPut = {
     validate: [...RatingController.writeValidation],
     controller: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-      const { user, goal, project, course } = req.body;
+      const { goal, project, course } = req.body;
 
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -118,25 +126,92 @@ class RatingController {
       }
 
       try {
+        const myCourses: MyCourse = await MyCourses.findOne({ user: res.locals.id });
+
+        if (!myCourses) {
+          next({
+            __src__: 'validator',
+            errors: [{ param: 'user', msg: 'You are not enrolled to rating' }],
+          });
+          return;
+        }
+
+        if (goal) {
+          let allow = false;
+          myCourses.goals.forEach((g) => {
+            if (g.id.toString() === goal.id) {
+              allow = true;
+            }
+          });
+
+          if (!allow) {
+            next({
+              __src__: 'validator',
+              errors: [{ param: 'user', msg: 'You are not enrolled for the goal' }],
+            });
+
+            return;
+          }
+        }
+        if (course) {
+          let allow = false;
+          myCourses.courses.forEach((c) => {
+            if (c.id.toString() === course.id) {
+              allow = true;
+            }
+          });
+
+          if (!allow) {
+            next({
+              __src__: 'validator',
+              errors: [{ param: 'user', msg: 'You are not enrolled for the course' }],
+            });
+
+            return;
+          }
+        }
+        if (project) {
+          let allow = false;
+          myCourses.projects.forEach((p) => {
+            if (p.id.toString() === project.id) {
+              allow = true;
+            }
+          });
+
+          if (!allow) {
+            next({
+              __src__: 'validator',
+              errors: [{ param: 'user', msg: 'You are not enrolled for the project' }],
+            });
+
+            return;
+          }
+        }
+
         const rating: Rating = await Ratings.findOne({ user: res.locals.id }).exec();
         if (!rating) {
           // create new one
           let goals = [];
           if (goal) {
-            goals = [{ id: goal.id, rating: goal.rating, comment: goal.raring, date: new Date() }];
+            goals = [{ id: goal.id, rating: goal.rating, comment: goal.comment, date: new Date() }];
           }
 
           let projects = [];
           if (project) {
             projects = [
-              { id: project.id, rating: project.rating, comment: project.raring, date: new Date() },
+              {
+                id: project.id,
+                rating: project.rating,
+                comment: project.comment,
+                date: new Date(),
+              },
             ];
           }
 
           let courses = [];
           if (course) {
             courses = [
-              { id: course.id, rating: course.rating, comment: course.raring, date: new Date() },
+              { id: course.id, rating: course.rating, comment: course.comment, date: new Date() },
             ];
           }
 
@@ -154,7 +229,7 @@ class RatingController {
           let alreadyPresent = false;
           if (goal) {
             rating.goals.forEach((g) => {
-              if (g.id !== goal.id) {
+              if (g.id.toString() !== goal.id) {
                 goals = [...goals, g];
               } else {
                 alreadyPresent = true;
@@ -163,7 +238,7 @@ class RatingController {
                   {
                     id: goal.id,
                     rating: goal.rating,
-                    comment: goal.raring,
+                    comment: goal.comment,
                     date: new Date(),
                   },
                 ];
@@ -175,7 +250,7 @@ class RatingController {
                 {
                   id: goal.id,
                   rating: goal.rating,
-                  comment: goal.raring,
+                  comment: goal.comment,
                   date: new Date(),
                 },
               ];
@@ -186,7 +261,7 @@ class RatingController {
           alreadyPresent = false;
           if (project) {
             rating.projects.forEach((p) => {
-              if (p.id !== project.id) {
+              if (p.id.toString() !== project.id) {
                 projects = [...projects, p];
               } else {
                 alreadyPresent = true;
@@ -195,7 +270,7 @@ class RatingController {
                   {
                     id: project.id,
                     rating: project.rating,
-                    comment: project.raring,
+                    comment: project.comment,
                     date: new Date(),
                   },
                 ];
@@ -207,7 +282,7 @@ class RatingController {
                 {
                   id: project.id,
                   rating: project.rating,
-                  comment: project.raring,
+                  comment: project.comment,
                   date: new Date(),
                 },
               ];
@@ -218,7 +293,7 @@ class RatingController {
           alreadyPresent = false;
           if (course) {
             rating.courses.forEach((c) => {
-              if (c.id !== course.id) {
+              if (c.id.toString() !== course.id) {
                 courses = [...courses, c];
               } else {
                 alreadyPresent = true;
@@ -227,7 +302,7 @@ class RatingController {
                   {
                     id: course.id,
                     rating: course.rating,
-                    comment: course.raring,
+                    comment: course.comment,
                     date: new Date(),
                   },
                 ];
@@ -239,7 +314,7 @@ class RatingController {
                 {
                   id: course.id,
                   rating: course.rating,
-                  comment: course.raring,
+                  comment: course.comment,
                   date: new Date(),
                 },
               ];
@@ -256,7 +331,7 @@ class RatingController {
           ).exec();
         }
 
-        res.status(201).end();
+        res.status(202).end();
       } catch (err) {
         next(err);
       }

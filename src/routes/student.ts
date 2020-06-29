@@ -1,17 +1,32 @@
-import { Router } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import MyCourseController from '../controllers/MyCourseController';
 import TransactionController from '../controllers/TransactionController';
+import RatingController from '../controllers/RatingController';
 
 const routes: Router = Router();
 
 /************************************ MyCourses ******************************************/
 // get my courses
-routes.get('/myCourses', MyCourseController.get);
+routes.get('/my-courses', MyCourseController.get);
 
 // create an order
 routes.post('/create-order', TransactionController.createOrder);
 
 // verify an order
 routes.post('/verify-order', TransactionController.verifyOrder);
+
+/************************************ Ratings ******************************************/
+// get my all rating
+routes.get(
+  '/my-ratings',
+  (req: Request, res: Response, next: NextFunction) => {
+    req.body.id = res.locals.id;
+    next();
+  },
+  RatingController.get
+);
+
+// add a rating
+routes.post('/my-ratings', RatingController.postPut.validate, RatingController.postPut.controller);
 
 export default routes;
