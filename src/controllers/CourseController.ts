@@ -7,10 +7,7 @@ class CourseController {
     body('name').not().isEmpty().withMessage('Name is required'),
     body('description').not().isEmpty().withMessage('Description is required'),
     body('img').custom((val, { req }) => {
-      if (
-        (val === '' || val === undefined) &&
-        (req.body.video === '' || req.body.video === undefined)
-      ) {
+      if ((val === '' || !val) && (req.body.video === '' || !req.body.video)) {
         throw new Error('An image is required');
       }
 

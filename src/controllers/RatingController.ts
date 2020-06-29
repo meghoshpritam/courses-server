@@ -7,10 +7,10 @@ class RatingController {
   static writeValidation = [
     body('goal').custom((value, { req }) => {
       if (value !== undefined) {
-        if (value.id === '' || value.id === undefined) {
+        if (value.id === '' || !value.id) {
           throw new Error('Goal id is required');
         }
-        if (value.rating === '' || value.rating === undefined) {
+        if (value.rating === '' || !value.rating) {
           throw new Error('Rating is required');
         } else {
           if (value.rating < 1) {
@@ -34,10 +34,10 @@ class RatingController {
     }),
     body('project').custom((value) => {
       if (value !== undefined) {
-        if (value.id === '' || value.id === undefined) {
+        if (value.id === '' || !value.id) {
           throw new Error('Project id is required');
         }
-        if (value.rating === '' || value.rating === undefined) {
+        if (value.rating === '' || !value.rating) {
           throw new Error('Rating is required');
         } else {
           if (value.rating < 1) {
@@ -54,10 +54,10 @@ class RatingController {
     }),
     body('course').custom((value) => {
       if (value !== undefined) {
-        if (value.id === '' || value.id === undefined) {
+        if (value.id === '' || !value.id) {
           throw new Error('Courses id is required');
         }
-        if (value.rating === '' || value.rating === undefined) {
+        if (value.rating === '' || !value.rating) {
           throw new Error('Rating is required');
         } else {
           if (value.rating < 1) {

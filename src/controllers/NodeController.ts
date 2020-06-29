@@ -3,6 +3,47 @@ import { Response, Request, NextFunction } from 'express';
 import Nodes, { Node } from '../entity/Nodes';
 
 class NodeController {
+  public static writeValidation = [
+    body('name').not().isEmpty().withMessage('Name is required'),
+    body('description').not().isEmpty().withMessage('Description is required'),
+    body('img').custom((val, { req }) => {
+      if ((val === '' || !val) && (req.body.video === '' || !req.body.video)) {
+        throw new Error('An image is required');
+      }
+
+      // pass the validation
+      return true;
+    }),
+    body('resources').custom((val) => {
+      if (val !== undefined) {
+        if (val?.name !== '' && typeof val.name !== 'string') {
+          throw new Error('Name of the resource is required');
+        }
+        if (val?.uri !== '' && typeof val.uri !== 'string') {
+          throw new Error('URI of the resource is required');
+        }
+      }
+
+      // pass the validation
+      return true;
+    }),
+    body('markdown').custom((val, { req }) => {
+      if (
+        (!val || val === '') &&
+        (!req.body.video || req.body.video === '') &&
+        !req.body.resources &&
+        (!req.body.exam || req.body.exam === '') &&
+        (!req.body.quiz || req.body.quiz === '') &&
+        (req.body.assignment === '' || !req.body.assignment)
+      ) {
+        throw new Error('A Markdown file is needed');
+      }
+
+      // pass the validation
+      return true;
+    }),
+  ];
+
   public static get = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { id } = req.query;
     console.log('id', id);
@@ -25,49 +66,7 @@ class NodeController {
   };
 
   public static post = {
-    validate: [
-      body('name').not().isEmpty().withMessage('Name is required'),
-      body('description').not().isEmpty().withMessage('Description is required'),
-      body('img').custom((val, { req }) => {
-        if (
-          (val === '' || val === undefined) &&
-          (req.body.video === '' || req.body.video === undefined)
-        ) {
-          throw new Error('An image is required');
-        }
-
-        // pass the validation
-        return true;
-      }),
-      body('resources').custom((val) => {
-        if (val !== undefined) {
-          if (val?.name !== '' && typeof val.name !== 'string') {
-            throw new Error('Name of the resource is required');
-          }
-          if (val?.uri !== '' && typeof val.uri !== 'string') {
-            throw new Error('URI of the resource is required');
-          }
-        }
-
-        // pass the validation
-        return true;
-      }),
-      body('markdown').custom((val, { req }) => {
-        if (
-          (val === undefined || val === '') &&
-          (req.body.video === undefined || req.body.video === '') &&
-          req.body.resources === undefined &&
-          (req.body.exam === undefined || req.body.exam === '') &&
-          (req.body.quiz === undefined || req.body.quiz === '') &&
-          (req.body.assignment === '' || req.body.assignment === undefined)
-        ) {
-          throw new Error('A Markdown file is needed');
-        }
-
-        // pass the validation
-        return true;
-      }),
-    ],
+    validate: [...NodeController.writeValidation],
     controller: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       const {
         name,
@@ -114,48 +113,8 @@ class NodeController {
 
   public static update = {
     validate: [
+      ...NodeController.writeValidation,
       body('id').not().isEmpty().withMessage('ID is required'),
-      body('name').not().isEmpty().withMessage('Name is required'),
-      body('description').not().isEmpty().withMessage('Description is required'),
-      body('img').custom((val, { req }) => {
-        if (
-          (val === '' || val === undefined) &&
-          (req.body.video === '' || req.body.video === undefined)
-        ) {
-          throw new Error('An image is required');
-        }
-
-        // pass the validation
-        return true;
-      }),
-      body('resources').custom((val) => {
-        if (val !== undefined) {
-          if (val?.name !== '' && typeof val.name !== 'string') {
-            throw new Error('Name of the resource is required');
-          }
-          if (val?.uri !== '' && typeof val.uri !== 'string') {
-            throw new Error('URI of the resource is required');
-          }
-        }
-
-        // pass the validation
-        return true;
-      }),
-      body('markdown').custom((val, { req }) => {
-        if (
-          (val === undefined || val === '') &&
-          (req.body.video === undefined || req.body.video === '') &&
-          req.body.resources === undefined &&
-          (req.body.exam === undefined || req.body.exam === '') &&
-          (req.body.quiz === undefined || req.body.quiz === '') &&
-          (req.body.assignment === '' || req.body.assignment === undefined)
-        ) {
-          throw new Error('A Markdown file is needed');
-        }
-
-        // pass the validation
-        return true;
-      }),
     ],
     controller: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       const {
