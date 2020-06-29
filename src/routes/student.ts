@@ -27,6 +27,11 @@ routes.get(
 );
 
 // add a rating
-routes.post('/my-ratings', RatingController.postPut.validate, RatingController.postPut.controller);
+routes.post('/my-rating', RatingController.postPut.validate, RatingController.postPut.controller);
 
+// update a rating
+routes.put('/my-rating', RatingController.postPut.validate, RatingController.postPut.controller);
+
+// delete a rating
+routes.delete('/my-rating', RatingController.delete);
 export default routes;

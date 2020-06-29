@@ -342,6 +342,16 @@ class RatingController {
     const { goalId, projectId, courseId } = req.query;
 
     try {
+      if (!goalId && !projectId && !courseId) {
+        const error = {
+          __src__: 'validator',
+          errors: [{ param: 'projectId', msg: 'ProjectId or CourseId or GoalId is required' }],
+        };
+
+        next(error);
+        return;
+      }
+
       const rating: Rating = await Ratings.findOne({ user: res.locals.id }).exec();
 
       if (rating === null) {
@@ -357,7 +367,7 @@ class RatingController {
       if (goalId) {
         let goals = [];
         rating.goals.forEach((goal) => {
-          if (goal.id !== goalId) {
+          if (goal.id.toString() !== goalId) {
             goals = [...goals, goal];
           }
         });
@@ -370,7 +380,7 @@ class RatingController {
       if (projectId) {
         let projects = [];
         rating.projects.forEach((project) => {
-          if (project.id !== projectId) {
+          if (project.id.toString() !== projectId) {
             projects = [...projects, project];
           }
         });
@@ -383,7 +393,7 @@ class RatingController {
       if (courseId) {
         let courses = [];
         rating.courses.forEach((course) => {
-          if (course.id !== courseId) {
+          if (course.id.toString() !== courseId) {
             courses = [...courses, course];
           }
         });
