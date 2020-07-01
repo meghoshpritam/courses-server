@@ -6,6 +6,7 @@ dependencies:
   express-validator: 6.5.0
   helmet: 3.23.1
   jsonwebtoken: 8.5.1
+  lodash: 4.17.15
   mongoose: 5.9.19_mongoose@5.9.19
   nodemailer: 6.4.10
   razorpay: 2.0.6
@@ -17,6 +18,7 @@ devDependencies:
   '@types/express-rate-limit': 5.0.0
   '@types/helmet': 0.0.47
   '@types/jsonwebtoken': 8.5.0
+  '@types/lodash': 4.14.157
   '@types/mongoose': 5.7.24
   '@types/node': 14.0.13
   '@types/nodemailer': 6.4.0
@@ -128,6 +130,10 @@ packages:
     dev: true
     resolution:
       integrity: sha512-9bVao7LvyorRGZCw0VmH/dr7Og+NdjYSsKAxB43OQoComFbBgsEpoR9JW6+qSq/ogwVBg8GI2MfAlk4SYI4OLg==
+  /@types/lodash/4.14.157:
+    dev: true
+    resolution:
+      integrity: sha512-Ft5BNFmv2pHDgxV5JDsndOWTRJ+56zte0ZpYLowp03tW+K+t8u8YMOzAnpuqPgzX6WO1XpDIUm7u04M8vdDiVQ==
   /@types/mime/2.0.2:
     dev: true
     resolution:
@@ -3184,6 +3190,7 @@ specifiers:
   '@types/express-rate-limit': ^5.0.0
   '@types/helmet': 0.0.47
   '@types/jsonwebtoken': ^8.5.0
+  '@types/lodash': ^4.14.157
   '@types/mongoose': ^5.7.24
   '@types/node': ^14.0.13
   '@types/nodemailer': ^6.4.0
@@ -3203,6 +3210,7 @@ specifiers:
   express-validator: ^6.5.0
   helmet: ^3.23.1
   jsonwebtoken: ^8.5.1
+  lodash: ^4.17.15
   mongoose: ^5.9.19
   nodemailer: ^6.4.10
   prettier: ^2.0.5

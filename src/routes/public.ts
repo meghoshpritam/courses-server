@@ -1,17 +1,16 @@
 import { Router } from 'express';
-
 import authRouters from './auth';
-import transactionRoutes from './transaction';
 import CourseController from '../controllers/CourseController';
+import HomePageController from '../controllers/pageController/HomePageController';
 
 const routes: Router = Router();
 
 // auth routes
 routes.use('/auth', authRouters);
 
-// public pages
+/************************************ Public pages routes ******************************************/
 // home page
-routes.get('/pages/home');
+routes.get('/pages/home', HomePageController.get);
 
 // get all courses
 routes.get('/courses', CourseController.get);
