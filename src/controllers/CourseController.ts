@@ -137,7 +137,11 @@ class CourseController {
           select: '-refreshToken -email',
         })
         .exec();
-      // TODO: test and fix populate
+
+      if (id) {
+        res.status(200).json({ course: courses[0] });
+      }
+
       res.status(200).json({ courses });
     } catch (err) {
       next(err);

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import authRouters from './auth';
 import CourseController from '../controllers/CourseController';
 import HomePageController from '../controllers/pageController/HomePageController';
+import CoursePageController from '../controllers/pageController/CoursePageController';
 
 const routes: Router = Router();
 
@@ -12,7 +13,7 @@ routes.use('/auth', authRouters);
 // home page
 routes.get('/pages/home', HomePageController.get);
 
-// get all courses
-routes.get('/courses', CourseController.get);
+// course page
+routes.get('/course', CoursePageController.publicCourseGet, CourseController.get);
 
 export default routes;
