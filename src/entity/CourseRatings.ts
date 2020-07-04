@@ -1,21 +1,31 @@
 import { Schema, model, Document } from 'mongoose';
 
-export interface CourseRating extends Document {
+interface Ratings {
   user: string;
-  id: string;
   rating: number;
-  comment: string;
+  comment?: string;
   date: Date;
+  updated?: Date;
+}
+
+export interface CourseRating extends Document {
+  id: string;
+  ratings: Ratings[];
 }
 
 const courseRatings = new Schema({
-  user: { type: Schema.Types.ObjectId, required: true, ref: 'Users' },
   id: { type: Schema.Types.ObjectId, required: true, ref: 'Courses' },
-  rating: { type: Number, required: true, min: 1, max: 5 },
-  comment: { type: String, required: false },
-  date: { type: Date, required: false, default: Date.now },
+  ratings: [
+    {
+      user: { type: Schema.Types.ObjectId, required: true, ref: 'Users' },
+      rating: { type: Number, required: true, min: 1, max: 5 },
+      comment: { type: String, required: false },
+      date: { type: Date, required: false, default: Date.now },
+      updated: { type: Date, required: false },
+    },
+  ],
 });
 
-const CourseRatings = model<CourseRating>('Ratings', courseRatings);
+const CourseRatings = model<CourseRating>('CourseRatings', courseRatings);
 
 export default CourseRatings;
