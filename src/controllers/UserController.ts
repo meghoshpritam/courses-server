@@ -290,15 +290,20 @@ class UserController {
   static signOut = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { refreshToken } = req.body;
 
+    const error = {
+      __src__: 'validator',
+      errors: [{ param: 'refreshToken', msg: 'Invalid refresh token' }],
+    };
+
     try {
       const decode: any = AuthController.verifyRefreshToken(refreshToken);
 
       if (!decode) {
-        const error = {
-          __src__: 'validator',
-          errors: [{ param: 'refreshToken', msg: 'Invalid refresh token' }],
-        };
+        next(error);
+        return;
+      }
 
+      if (decode.id !== res.locals.id) {
         next(error);
         return;
       }
@@ -306,11 +311,6 @@ class UserController {
       const user: User = await Users.findOne({ _id: decode.id }).exec();
 
       if (user.refreshToken.indexOf(refreshToken) === -1) {
-        const error = {
-          __src__: 'validator',
-          errors: [{ param: 'refreshToken', msg: 'Invalid refresh token' }],
-        };
-
         next(error);
         return;
       }
@@ -324,7 +324,7 @@ class UserController {
         }
       ).exec();
 
-      res.status(200).json({ msg: 'successfully sign out without 25 hour' });
+      res.status(200).json({ msg: 'successfully sign out' });
     } catch (err) {
       next(err);
     }

@@ -1,3 +1,4 @@
+import { checkAccessToken } from './../middleware/checkJwt';
 /*
  * Authentication routes
  */
@@ -54,7 +55,7 @@ const apiLimiterSignUpVerification = rateLimit({
 routes.post('/sign-up-otp-verify', apiLimiterSignUpVerification, UserController.signUpOTPVerify);
 
 // sign out
-routes.post('/sign-out', UserController.signOut);
+routes.post('/sign-out', checkAccessToken, UserController.signOut);
 
 // sign out all
 routes.post('/sign-out-all', UserController.signOutAll);
