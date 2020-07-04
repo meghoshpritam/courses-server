@@ -140,6 +140,7 @@ class CourseController {
 
       if (id) {
         res.status(200).json({ course: courses[0] });
+        return;
       }
 
       res.status(200).json({ courses });
