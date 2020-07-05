@@ -80,7 +80,7 @@ class CourseRatingController {
           if (!course) {
             next({
               __src__: 'validator',
-              errors: [{ param: 'id', msg: 'Invalid course rating' }],
+              errors: [{ param: 'id', msg: 'Invalid course id' }],
             });
             return;
           }
@@ -187,7 +187,10 @@ class CourseRatingController {
         return;
       }
 
-      const rating = await CourseRatings.find({ id, 'ratings.user': res.locals.id }).exec();
+      const rating: CourseRating = await CourseRatings.findOne({
+        id,
+        'ratings.user': res.locals.id,
+      }).exec();
 
       if (!rating) {
         next({

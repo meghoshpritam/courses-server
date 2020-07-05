@@ -80,7 +80,7 @@ class GoalRatingController {
           if (!goal) {
             next({
               __src__: 'validator',
-              errors: [{ param: 'id', msg: 'Invalid goal rating' }],
+              errors: [{ param: 'id', msg: 'Invalid goal id' }],
             });
             return;
           }
@@ -187,7 +187,10 @@ class GoalRatingController {
         return;
       }
 
-      const rating = await GoalRatings.find({ id, 'ratings.user': res.locals.id }).exec();
+      const rating: GoalRating = await GoalRatings.findOne({
+        id,
+        'ratings.user': res.locals.id,
+      }).exec();
 
       if (!rating) {
         next({
