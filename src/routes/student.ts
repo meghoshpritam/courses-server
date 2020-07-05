@@ -4,6 +4,7 @@ import TransactionController from '../controllers/TransactionController';
 import RatingController from '../controllers/RatingController';
 import CourseRatingController from '../controllers/CourseRatingController';
 import GoalRatingController from '../controllers/GoalRatingController';
+import ProjectRatingController from '../controllers/ProjectRatingController';
 
 const routes: Router = Router();
 
@@ -76,4 +77,25 @@ routes.put(
 
 // delete a goal rating
 routes.delete('/ratings/goal', GoalRatingController.delete);
+
+// get all project ratings
+routes.get('/ratings/project', ProjectRatingController.get);
+
+// give a rating to a project
+routes.post(
+  '/ratings/project',
+  ProjectRatingController.post.validate,
+  ProjectRatingController.post.controller
+);
+
+// update a project rating
+routes.put(
+  '/ratings/project',
+  ProjectRatingController.update.validate,
+  ProjectRatingController.update.controller
+);
+
+// delete a project rating
+routes.delete('/ratings/project', ProjectRatingController.delete);
+
 export default routes;
