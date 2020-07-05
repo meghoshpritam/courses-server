@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import MyCourseController from '../controllers/MyCourseController';
 import TransactionController from '../controllers/TransactionController';
 import RatingController from '../controllers/RatingController';
+import CourseRatingController from '../controllers/CourseRatingController';
 
 const routes: Router = Router();
 
@@ -34,4 +35,25 @@ routes.put('/my-rating', RatingController.postPut.validate, RatingController.pos
 
 // delete a rating
 routes.delete('/my-rating', RatingController.delete);
+
+// get all course ratings
+routes.get('/ratings/course', CourseRatingController.get);
+
+// give a rating to a course
+routes.post(
+  '/ratings/course',
+  CourseRatingController.post.validate,
+  CourseRatingController.post.controller
+);
+
+// update a rating
+routes.put(
+  '/ratings/course',
+  CourseRatingController.update.validate,
+  CourseRatingController.update.controller
+);
+
+// delete a course rating
+routes.delete('/ratings/course', CourseRatingController.delete);
+
 export default routes;

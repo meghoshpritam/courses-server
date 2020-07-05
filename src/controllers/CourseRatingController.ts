@@ -15,6 +15,9 @@ class CourseRatingController {
       .custom((value) => {
         if (value < 1) throw Error('Min rating is 1!');
         if (value > 5) throw Error('Max rating is 5!');
+
+        // pass the validation
+        return true;
       }),
   ];
 
@@ -100,7 +103,7 @@ class CourseRatingController {
           return;
         }
 
-        if (find(courseRating.ratings, { user: res.locals.id })) {
+        if (find(courseRating.ratings, (obj) => obj.user.toString() === res.locals.id)) {
           next({
             __src__: 'validator',
             errors: [{ param: 'rating', msg: 'You already rated the course' }],
@@ -108,7 +111,7 @@ class CourseRatingController {
           return;
         }
 
-        await CourseRatings.update(
+        await CourseRatings.updateOne(
           { id },
           {
             $push: {
@@ -154,8 +157,8 @@ class CourseRatingController {
           return;
         }
 
-        await CourseRatings.update(
-          { id, 'ratings.id': res.locals.id },
+        await CourseRatings.updateOne(
+          { id, 'ratings.user': res.locals.id },
           {
             $set: {
               'ratings.$.rating': rating,
@@ -194,7 +197,7 @@ class CourseRatingController {
         return;
       }
 
-      await CourseRatings.update({ id }, { $pull: { ratings: { user: res.locals.id } } }).exec();
+      await CourseRatings.updateOne({ id }, { $pull: { ratings: { user: res.locals.id } } }).exec();
 
       res.status(204).json({ msg: `${res.locals.name} you delete your rating` });
     } catch (err) {
