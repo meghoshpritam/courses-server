@@ -3,6 +3,7 @@ import MyCourseController from '../controllers/MyCourseController';
 import TransactionController from '../controllers/TransactionController';
 import RatingController from '../controllers/RatingController';
 import CourseRatingController from '../controllers/CourseRatingController';
+import GoalRatingController from '../controllers/GoalRatingController';
 
 const routes: Router = Router();
 
@@ -46,7 +47,7 @@ routes.post(
   CourseRatingController.post.controller
 );
 
-// update a rating
+// update a course rating
 routes.put(
   '/ratings/course',
   CourseRatingController.update.validate,
@@ -56,4 +57,23 @@ routes.put(
 // delete a course rating
 routes.delete('/ratings/course', CourseRatingController.delete);
 
+// get all goal ratings
+routes.get('/ratings/goal', GoalRatingController.get);
+
+// give a rating to a goal
+routes.post(
+  '/ratings/goal',
+  GoalRatingController.post.validate,
+  GoalRatingController.post.controller
+);
+
+// update a goal rating
+routes.put(
+  '/ratings/goal',
+  GoalRatingController.update.validate,
+  GoalRatingController.update.controller
+);
+
+// delete a goal rating
+routes.delete('/ratings/goal', GoalRatingController.delete);
 export default routes;
