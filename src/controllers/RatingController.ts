@@ -2,6 +2,8 @@ import { body, validationResult } from 'express-validator';
 import { Response, Request, NextFunction } from 'express';
 import Ratings, { Rating } from '../entity/Rating';
 import MyCourses, { MyCourse } from '../entity/MyCourses';
+import Courses, { Course } from '../entity/Courses';
+import { find } from 'lodash';
 
 class RatingController {
   static writeValidation = [
@@ -409,6 +411,64 @@ class RatingController {
       next(err);
     }
   };
+
+  // TODO: course, goals, projects rating
+  public static getCourseRatingById = async ({
+    courseId,
+    comment = false,
+  }: {
+    courseId?: string;
+    comment: boolean;
+  }): Promise<any> => {
+    try {
+      const course: Course | any = await Courses.findOne({ _id: courseId })
+        .populate({ path: 'creator', select: '-refreshToken -email -__version' })
+        .select('name active inactiveMsg role about avatar')
+        .exec();
+
+      if (!course) {
+        throw {
+          __src__: 'validator',
+          errors: [{ param: 'id', msg: 'Invalid course id' }],
+        };
+      }
+
+      const ratings: Rating[] = await Ratings.find({ courses: { $elemMatch: { id: courseId } } })
+        .select('user courses')
+        .exec();
+
+      let totalRating = 0,
+        userRatings = [],
+        totalUser = 0;
+
+      ratings.forEach((user) => {
+        totalRating += user.courses[0].rating;
+        totalUser++;
+        if (comment)
+          userRatings.push({
+            user: user.user,
+            rating: user.courses[0].rating,
+            comment: user.courses[0].comment,
+            date: user.courses[0].date,
+          });
+      });
+
+      let returnCourse = {
+        ...course._doc,
+        rating: (totalRating / totalUser).toFixed(1),
+      };
+
+      if (comment) {
+        returnCourse = { ...returnCourse, ratings: userRatings };
+      }
+
+      return returnCourse;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  public static;
 }
 
 export default RatingController;

@@ -21,38 +21,103 @@ class CourseRatingController {
       }),
   ];
 
+  public static getController = async ({
+    userId,
+    courseId,
+    courseIds,
+    courseDetails = false,
+    withRatings = true,
+    ratingUser = false,
+  }: {
+    userId?: string;
+    courseId?: string;
+    courseIds?: string[];
+    courseDetails?: boolean;
+    withRatings?: boolean;
+    ratingUser?: boolean;
+  }): Promise<any> => {
+    try {
+      let query = CourseRatings.find({});
+
+      if (courseIds) {
+        let filter = [];
+
+        courseIds?.forEach((id) => {
+          filter.push({
+            id,
+          });
+        });
+
+        query = CourseRatings.find({ $or: [...filter] });
+      } else if (userId && courseId) {
+        query = CourseRatings.find({
+          id: courseId,
+          'ratings.user': userId,
+        });
+      } else if (userId) {
+        query = CourseRatings.find({
+          'ratings.user': userId,
+        });
+      } else if (courseId) {
+        query = CourseRatings.find({
+          id: courseId,
+        });
+      }
+
+      if (courseDetails) {
+        query = query.populate({
+          path: 'id',
+          select: 'name description price img video updated creator',
+          populate: { path: 'creator', select: 'name' },
+        });
+      }
+
+      if (ratingUser) {
+        query = query.populate({ path: 'ratings', populate: { path: 'user', select: 'name' } });
+      }
+      const ratings: CourseRating[] = await query.exec();
+
+      let returnRatings = [];
+      let totalRating = 0,
+        totalUser = 0;
+      ratings.forEach((rating: any) => {
+        totalRating = totalUser = 0;
+        rating.ratings.forEach((sURating) => {
+          totalUser += 1;
+          totalRating += sURating.rating;
+        });
+
+        if (withRatings) {
+          returnRatings.push({
+            ...rating.id._doc,
+            ratings: [...rating.ratings],
+            totalUserRating: totalUser,
+            rating: (totalRating / totalUser).toFixed(1),
+          });
+        } else {
+          returnRatings.push({
+            ...rating.id._doc,
+            totalUserRating: totalUser,
+            rating: (totalRating / totalUser).toFixed(1),
+          });
+        }
+      });
+
+      return returnRatings;
+    } catch (err) {
+      throw err;
+    }
+  };
+
   // TODO: test all and add populate in get
   public static get = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { userId, courseId } = req.query;
 
     try {
-      if (userId && courseId) {
-        const rating: CourseRating = await CourseRatings.findOne({
-          id: courseId,
-          'ratings.user': userId,
-        }).exec();
-
-        res.status(200).json({ ratings: rating });
-        return;
-      }
-      if (userId) {
-        const ratings: CourseRating = await CourseRatings.findOne({
-          'ratings.user': userId,
-        }).exec();
-
-        res.status(200).json({ ratings });
-        return;
-      }
-      if (courseId) {
-        const ratings: CourseRating = await CourseRatings.findOne({
-          id: courseId,
-        }).exec();
-
-        res.status(200).json({ ratings });
-        return;
-      }
-
-      const ratings: CourseRating = await CourseRatings.findOne({}).exec();
+      const ratings = await CourseRatingController.getController({
+        courseId: courseId.toString(),
+        userId: courseId.toString(),
+      });
 
       res.status(200).json({ ratings });
     } catch (err) {

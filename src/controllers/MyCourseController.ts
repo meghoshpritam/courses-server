@@ -1,3 +1,4 @@
+import { find } from 'lodash';
 import { body, validationResult } from 'express-validator';
 import { Response, Request, NextFunction } from 'express';
 import MyCourses, { MyCourse } from '../entity/MyCourses';
@@ -67,6 +68,7 @@ class MyCourseController {
       const myCourse: MyCourse = await MyCourses.findOne({ user: user }).exec();
       if (!myCourse) {
         // create new one
+
         let goals = [];
         if (goal) {
           goals = [
@@ -119,83 +121,68 @@ class MyCourseController {
         await newMyCourse.save();
       } else {
         // update or add new one
-        let goals = [...myCourse.goals];
+
+        if (goal && find(myCourse.goals, (obj) => obj.id.toString() === goal.id)) {
+          throw {
+            __src__: 'validator',
+            errors: [{ param: 'id', msg: 'Goal is already enrolled' }],
+          };
+        }
+        if (course && find(myCourse.courses, (obj) => obj.id.toString() === course.id)) {
+          throw {
+            __src__: 'validator',
+            errors: [{ param: 'id', msg: 'Course is already enrolled' }],
+          };
+        }
+        if (project && find(myCourse.projects, (obj) => obj.id.toString() === project.id)) {
+          throw {
+            __src__: 'validator',
+            errors: [{ param: 'id', msg: 'Project is already enrolled' }],
+          };
+        }
+
         if (goal) {
-          let add = true;
-          goals.forEach((g) => {
-            if (g.id.toString() === goal.id) {
-              add = false;
-            }
-          });
-          if (add) {
-            goals = [
-              ...goals,
-              {
-                id: goal.id,
-                date: new Date(),
-                price: goal.price,
-                transactionId: goal.transactionId,
-                reference: goal.reference,
-                orderId: goal.orderId,
+          await MyCourses.updateOne(
+            { user: user },
+            {
+              $set: {
+                'goals.$.id': goal.id,
+                'goals.$.price': goal.price,
+                'goals.$.transactionId': goal.transactionId,
+                'goals.$.orderId': goal.orderId,
+                'goals.$.reference': goal.reference,
               },
-            ];
-          }
-        }
-
-        let projects = [...myCourse.projects];
-        if (project) {
-          let add = true;
-          projects.forEach((p) => {
-            if (p.id.toString() === goal.id) {
-              add = false;
             }
-          });
-          if (add) {
-            projects = [
-              ...projects,
-              {
-                id: project.id,
-                date: new Date(),
-                price: project.price,
-                transactionId: project.transactionId,
-                reference: project.reference,
-                orderId: project.orderId,
-              },
-            ];
-          }
+          ).exec();
         }
-
-        let courses = [...myCourse.courses];
         if (course) {
-          let add = true;
-          courses.forEach((c) => {
-            if (c.id.toString() === goal.id) {
-              add = false;
-            }
-          });
-          if (add) {
-            courses = [
-              ...courses,
-              {
-                id: course.id,
-                date: new Date(),
-                price: course.price,
-                transactionId: course.transactionId,
-                reference: course.reference,
-                orderId: course.orderId,
+          await MyCourses.updateOne(
+            { user: user },
+            {
+              $set: {
+                'courses.$.id': course.id,
+                'courses.$.price': course.price,
+                'courses.$.transactionId': course.transactionId,
+                'courses.$.orderId': course.orderId,
+                'courses.$.reference': course.reference,
               },
-            ];
-          }
+            }
+          ).exec();
         }
-        await MyCourses.update(
-          { _id: myCourse._id },
-          {
-            user,
-            goals,
-            projects,
-            courses,
-          }
-        ).exec();
+        if (project) {
+          await MyCourses.updateOne(
+            { user: user },
+            {
+              $set: {
+                'projects.$.id': project.id,
+                'projects.$.price': project.price,
+                'projects.$.transactionId': project.transactionId,
+                'projects.$.orderId': project.orderId,
+                'projects.$.reference': project.reference,
+              },
+            }
+          ).exec();
+        }
       }
     } catch (err) {
       throw err;

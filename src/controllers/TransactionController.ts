@@ -42,15 +42,17 @@ class TransactionController {
                 goal: {
                   id: goalId,
                   price: goal.price,
-                  transactionId: null,
-                  orderId: null,
+                  transactionId: 'free',
+                  orderId: 'free',
                 },
               });
+
+              res.status(201).json({ msg: 'Goal enrolled' });
             } catch (e) {
               next(e);
+            } finally {
+              return;
             }
-            res.status(200).json({ msg: 'Goal enrolled' });
-            return;
           }
           data = await TransactionController.instance.orders.create({
             amount: goal.price * 100,
@@ -73,22 +75,27 @@ class TransactionController {
 
         if (course) {
           if (course.price === 0) {
+            console.log('entered............');
             try {
               await MyCourseController.add({
                 user: res.locals.id,
                 course: {
                   id: courseId,
                   price: course.price,
-                  transactionId: null,
-                  orderId: null,
+                  transactionId: 'free',
+                  orderId: 'free',
                 },
               });
+
+              res.status(201).json({ msg: 'Course enrolled' });
+              console.log('oops!');
             } catch (e) {
               next(e);
+            } finally {
+              return;
             }
-            res.status(200).json({ msg: 'Course enrolled' });
-            return;
           }
+          console.log('Oops!!');
           data = await TransactionController.instance.orders.create({
             amount: course.price * 100,
             currency: 'INR',
@@ -113,18 +120,20 @@ class TransactionController {
             try {
               await MyCourseController.add({
                 user: res.locals.id,
-                goal: {
+                project: {
                   id: projectId,
                   price: project.price,
-                  transactionId: null,
-                  orderId: null,
+                  transactionId: 'free',
+                  orderId: 'free',
                 },
               });
+
+              res.status(201).json({ msg: 'Project enrolled' });
             } catch (e) {
               next(e);
+            } finally {
+              return;
             }
-            res.status(200).json({ msg: 'Project enrolled' });
-            return;
           }
           data = await TransactionController.instance.orders.create({
             amount: project.price * 100,
