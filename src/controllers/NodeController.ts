@@ -16,12 +16,14 @@ class NodeController {
     }),
     body('resources').custom((val) => {
       if (val !== undefined) {
-        if (val?.name !== '' && typeof val.name !== 'string') {
-          throw new Error('Name of the resource is required');
-        }
-        if (val?.uri !== '' && typeof val.uri !== 'string') {
-          throw new Error('URI of the resource is required');
-        }
+        val?.forEach((resource) => {
+          if (!resource.name || resource?.name === '') {
+            throw new Error('Name of the resource is required');
+          }
+          if (!resource.uri || resource?.uri === '') {
+            throw new Error('URI of the resource is required');
+          }
+        });
       }
 
       // pass the validation
@@ -80,6 +82,7 @@ class NodeController {
         assignment,
       }: Node = req.body;
 
+      console.log('props: ', req.body);
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         next({ __src__: 'express-validator', errors });
@@ -90,20 +93,20 @@ class NodeController {
         const node: Node = new Nodes({
           name,
           description,
-          img,
-          video,
-          markdown,
-          resources,
-          quiz,
-          exam,
+          img: img === '' ? undefined : img,
+          video: video === '' ? undefined : video,
+          markdown: markdown === '' ? undefined : markdown,
+          resources: !resources ? [] : resources,
+          quiz: quiz === '' ? undefined : quiz,
+          exam: exam === '' ? undefined : exam,
           updated: new Date(),
           creator: res.locals.id,
-          assignment,
+          assignment: assignment === '' ? undefined : assignment,
         });
 
         node.save();
 
-        res.status(201).end();
+        res.status(201).json({ msg: 'Node added successfully' });
       } catch (err) {
         next(err);
       }
