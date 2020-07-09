@@ -77,7 +77,6 @@ class NodeController {
         resources,
         quiz,
         exam,
-        updated,
         assignment,
       }: Node = req.body;
 
@@ -97,7 +96,7 @@ class NodeController {
           resources,
           quiz,
           exam,
-          updated,
+          updated: new Date(),
           creator: res.locals.id,
           assignment,
         });
