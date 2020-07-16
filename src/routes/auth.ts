@@ -17,7 +17,12 @@ const apiLimiterSignIn = rateLimit({
 });
 
 // sign in
-routes.post('/sign-in', apiLimiterSignIn, UserController.signIn);
+routes.post(
+  '/sign-in',
+  apiLimiterSignIn,
+  UserController.signIn.validate,
+  UserController.signIn.controller
+);
 
 // limit for sign in verification
 const apiLimiterSignInVerification = rateLimit({

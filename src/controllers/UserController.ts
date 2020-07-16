@@ -152,76 +152,86 @@ class UserController {
    * otp to the email and token to the clint
    */
   // TODO: If old refresh token is exist then create a new one and save it to db and also update the old refresh token whenever ask for new access token maximum 3 signIn possible
-  static signIn = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { email } = req.body;
+  static signIn = {
+    validate: [body('email').normalizeEmail()],
+    controller: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      const { email } = req.body;
 
-    const error: { __src__: string; errors: { param: string; msg: string }[] } = {
-      __src__: 'validator',
-      errors: [],
-    };
+      const error: { __src__: string; errors: { param: string; msg: string }[] } = {
+        __src__: 'validator',
+        errors: [],
+      };
 
-    try {
-      const user: User = await Users.findOne({ email });
-
-      if (user === null) {
-        error.errors = [{ param: 'email', msg: 'Email id is not register with us!' }];
-        next(error);
-        return;
-      }
-      if (!user.active) {
-        error.errors = [{ param: 'email', msg: `Account is inactive, ${user.inactiveMsg}` }];
-        next(error);
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        next({ __src__: 'express-validator', errors });
         return;
       }
 
-      let nullIdx = -1;
-      if (user.refreshToken.length > 2) {
-        for (let idx = 0; idx < user.refreshToken.length; idx++) {
-          if (user.refreshToken[idx] === null) {
-            nullIdx = idx;
-            break;
-          }
-        }
-        if (nullIdx === -1) {
-          error.errors = [
-            { param: 'email', msg: `You can access your account from maximum 3 device!` },
-          ];
+      try {
+        console.log('email', email);
+        const user: User = await Users.findOne({ email });
+
+        if (user === null) {
+          error.errors = [{ param: 'email', msg: 'Email id is not register with us!' }];
           next(error);
           return;
         }
-      }
-
-      const otp = generateOtp();
-
-      const token = sign(
-        { email, index: nullIdx !== -1 ? nullIdx : user.refreshToken.length },
-        config.otpVerificationTokenSecret + otp,
-        {
-          expiresIn: '10m',
+        if (!user.active) {
+          error.errors = [{ param: 'email', msg: `Account is inactive, ${user.inactiveMsg}` }];
+          next(error);
+          return;
         }
-      );
 
-      console.log('otp: ', otp, '\ntoken: ', token);
-      const transporter = createTransport({
-        service: 'gmail',
-        auth: {
-          user: process.env.EMAIL_ID,
-          pass: process.env.PASSWORD,
-        },
-      });
-      let info = await transporter.sendMail({
-        from: process.env.EMAIL_ID,
-        to: email,
-        subject: 'Sign In with your account',
-        text: `Your OTP is: ${otp}. Enter the OTP for register. OTP is valid for 10 minutes.`,
-      });
+        let nullIdx = -1;
+        if (user.refreshToken.length > 2) {
+          for (let idx = 0; idx < user.refreshToken.length; idx++) {
+            if (user.refreshToken[idx] === null) {
+              nullIdx = idx;
+              break;
+            }
+          }
+          if (nullIdx === -1) {
+            error.errors = [
+              { param: 'email', msg: `You can access your account from maximum 3 device!` },
+            ];
+            next(error);
+            return;
+          }
+        }
 
-      res.status(200).json({
-        token,
-      });
-    } catch (err) {
-      next(err);
-    }
+        const otp = generateOtp();
+
+        const token = sign(
+          { email, index: nullIdx !== -1 ? nullIdx : user.refreshToken.length },
+          config.otpVerificationTokenSecret + otp,
+          {
+            expiresIn: '10m',
+          }
+        );
+
+        console.log('otp: ', otp, '\ntoken: ', token);
+        const transporter = createTransport({
+          service: 'gmail',
+          auth: {
+            user: process.env.EMAIL_ID,
+            pass: process.env.PASSWORD,
+          },
+        });
+        let info = await transporter.sendMail({
+          from: process.env.EMAIL_ID,
+          to: email,
+          subject: 'Sign In with your account',
+          text: `Your OTP is: ${otp}. Enter the OTP for register. OTP is valid for 10 minutes.`,
+        });
+
+        res.status(200).json({
+          token,
+        });
+      } catch (err) {
+        next(err);
+      }
+    },
   };
 
   /*
