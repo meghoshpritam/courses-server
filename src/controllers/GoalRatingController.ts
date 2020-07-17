@@ -21,6 +21,94 @@ class GoalRatingController {
       }),
   ];
 
+  public static getController = async ({
+    userId,
+    goalId,
+    goalIds,
+    goalDetails = false,
+    withRatings = true,
+    ratingUser = false,
+  }: {
+    userId?: string;
+    goalId?: string;
+    goalIds?: string[];
+    goalDetails?: boolean;
+    withRatings?: boolean;
+    ratingUser?: boolean;
+  }): Promise<any> => {
+    try {
+      let query = GoalRatings.find({});
+
+      if (goalIds) {
+        let filter = [];
+
+        goalIds?.forEach((id) => {
+          filter.push({
+            id,
+          });
+        });
+
+        query = GoalRatings.find({ $or: [...filter] });
+      } else if (userId && GoalId) {
+        query = GoalRatings.find({
+          id: goalId,
+          'ratings.user': userId,
+        });
+      } else if (userId) {
+        query = GoalRatings.find({
+          'ratings.user': userId,
+        });
+      } else if (goalId) {
+        query = GoalRatings.find({
+          id: goalId,
+        });
+      }
+
+      if (goalDetails) {
+        query = query.populate({
+          path: 'id',
+          select: 'name description price img video updated creator',
+          populate: { path: 'creator', select: 'name' },
+        });
+      }
+
+      if (ratingUser) {
+        query = query.populate({ path: 'ratings', populate: { path: 'user', select: 'name' } });
+      }
+      const ratings: GoalRating[] = await query.exec();
+
+      let returnRatings = [];
+      let totalRating = 0,
+        totalUser = 0;
+      ratings.forEach((rating: any) => {
+        totalRating = totalUser = 0;
+        rating.ratings.forEach((sURating) => {
+          totalUser += 1;
+          totalRating += sURating.rating;
+        });
+
+        if (withRatings) {
+          returnRatings.push({
+            ...rating.id._doc,
+            ratings: [...rating.ratings],
+            totalUserRating: totalUser,
+            rating: (totalRating / totalUser).toFixed(1),
+          });
+        } else {
+          returnRatings.push({
+            ...rating.id._doc,
+            totalUserRating: totalUser,
+            rating: (totalRating / totalUser).toFixed(1),
+          });
+        }
+      });
+
+      return returnRatings;
+    } catch (err) {
+      throw err;
+    }
+  };
+
   // TODO: test all and add populate in get
   public static get = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { userId, goalId } = req.query;

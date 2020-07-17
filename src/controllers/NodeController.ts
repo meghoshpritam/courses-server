@@ -57,8 +57,8 @@ class NodeController {
 
       const nodes: Node[] = await Nodes.find(query)
         .populate({ path: 'creator', select: '-refreshToken -email' })
-        // .populate({ path: 'exam' })
-        // .populate({ path: 'assignment' })
+        .populate({ path: 'exam' })
+        .populate({ path: 'assignment' })
         .exec();
 
       res.status(200).json({ nodes });

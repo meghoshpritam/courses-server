@@ -5,6 +5,7 @@ import AssignmentController from '../controllers/AssignmentController';
 import ExamController from '../controllers/ExamController';
 import ProjectController from '../controllers/ProjectController';
 import GoalController from '../controllers/GoalController';
+import AdminPageController from '../controllers/pageController/adminPageController';
 
 const routes: Router = Router();
 
@@ -94,4 +95,7 @@ routes.put('/goals', GoalController.update.validate, GoalController.update.contr
 // delete a goal
 routes.delete('/goals', GoalController.delete);
 
+/************************************ Page routes ******************************************/
+// get all nodes, courses, goals, projects
+routes.get('/get-all', AdminPageController.getAll);
 export default routes;
