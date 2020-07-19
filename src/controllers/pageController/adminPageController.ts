@@ -1,3 +1,4 @@
+import Goals, { Goal } from './../../entity/Goals';
 import Users, { User } from './../../entity/Users';
 import Assignments, { Assignment } from './../../entity/Assignments';
 import Exams, { Exam } from './../../entity/Exams';
@@ -34,7 +35,7 @@ class AdminPageController {
         .exec();
 
       // all goals
-      const goals: Project[] = await Projects.find({ creator: res.locals.id })
+      const goals: Goal[] = await Goals.find({ creator: res.locals.id })
         .populate({
           path: 'creator',
           select: 'name',

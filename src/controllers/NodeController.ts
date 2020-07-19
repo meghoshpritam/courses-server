@@ -106,7 +106,7 @@ class NodeController {
 
         node.save();
 
-        res.status(201).json({ msg: 'Node added successfully' });
+        res.status(201).json({ msg: 'Node added successfully', id: node._id });
       } catch (err) {
         next(err);
       }
@@ -162,19 +162,19 @@ class NodeController {
           {
             name,
             description,
-            img,
-            video,
-            markdown,
-            resources: resources || [],
-            quiz,
-            exam,
+            img: img === '' ? undefined : img,
+            video: video === '' ? undefined : video,
+            markdown: markdown === '' ? undefined : markdown,
+            resources: !resources ? [] : resources,
+            quiz: quiz === '' ? undefined : quiz,
+            exam: exam === '' ? undefined : exam,
             updated: new Date(),
             creator: res.locals.id,
-            assignment,
+            assignment: assignment === '' ? undefined : assignment,
           }
         ).exec();
 
-        res.status(202).end();
+        res.status(202).json({ msg: `${id} node updated` });
       } catch (err) {
         next(err);
       }
