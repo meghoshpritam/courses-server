@@ -26,26 +26,32 @@ class ProfilePageController {
         return;
       }
 
-      const myCourses: MyCourse = await MyCourses.findOne({ user: res.locals.id });
+      const myCourses: MyCourse = await MyCourses.findOne({ user: '5f10035c9643dd2b6042f00d' })
+        .populate({
+          path: 'courses',
+          populate: { path: 'id', select: 'name description img video creator updated price' },
+        })
+        .exec();
 
-      let enrollCourses = [];
-      if (myCourses?.courses) {
-        const courseIds = [];
+      console.log('myC', myCourses);
+      // let enrollCourses = [];
+      // if (myCourses?.courses) {
+      //   const courseIds = [];
 
-        myCourses.courses.forEach((course) => {
-          courseIds.push(course.id);
-        });
+      //   myCourses.courses.forEach((course) => {
+      //     courseIds.push(course.id);
+      //   });
 
-        const ratings = await CourseRatingController.getController({
-          courseIds,
-          courseDetails: true,
-          withRatings: false,
-        });
+      //   const ratings = await CourseRatingController.getController({
+      //     courseIds,
+      //     courseDetails: true,
+      //     withRatings: false,
+      //   });
 
-        enrollCourses = ratings;
-      }
+      //   enrollCourses = ratings;
+      // }
 
-      res.status(200).json({ user, courses: enrollCourses });
+      res.status(200).json({ user, courses: myCourses });
       // }
     } catch (err) {
       next(err);

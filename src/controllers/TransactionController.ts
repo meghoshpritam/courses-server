@@ -26,7 +26,7 @@ class TransactionController {
       let check = false;
 
       if (goalId) {
-        const goal: Goal = await Goals.findOne({ _id: goalId });
+        const goal: Goal = await Goals.findOne({ _id: goalId }).exec();
 
         try {
           check = await MyCourseController.alreadyExist({ user: res.locals.id, goalId });
@@ -65,8 +65,10 @@ class TransactionController {
           });
         }
       } else if (courseId) {
-        const course: Course = await Courses.findOne({ _id: courseId });
+        console.log('course id', courseId);
+        const course: Course = await Courses.findOne({ _id: courseId }).exec();
 
+        console.log('course', course);
         try {
           check = await MyCourseController.alreadyExist({ user: res.locals.id, courseId });
         } catch (err) {
@@ -107,7 +109,7 @@ class TransactionController {
           });
         }
       } else if (projectId) {
-        const project: Project = await Projects.findOne({ _id: projectId });
+        const project: Project = await Projects.findOne({ _id: projectId }).exec();
 
         try {
           check = await MyCourseController.alreadyExist({ user: res.locals.id, projectId });
@@ -214,7 +216,7 @@ class TransactionController {
       }
 
       if (decode.course) {
-        const course: Course = await Courses.findOne({ _id: decode.course });
+        const course: Course = await Courses.findOne({ _id: decode.course }).exec();
 
         if (!course || decode.price !== course?.price * 100) {
           console.log('price related issue or course', course, decode.price, course.price);
@@ -238,7 +240,7 @@ class TransactionController {
           return;
         }
       } else if (decode.goal) {
-        const goal: Goal = await Goals.findOne({ _id: decode.course });
+        const goal: Goal = await Goals.findOne({ _id: decode.course }).exec();
 
         if (!goal || decode.price !== goal?.price * 100) {
           console.log('goal error');
@@ -262,7 +264,7 @@ class TransactionController {
           return;
         }
       } else if (decode.project) {
-        const project: Project = await Projects.findOne({ _id: decode.course });
+        const project: Project = await Projects.findOne({ _id: decode.course }).exec();
 
         if (!project || decode.price !== project?.price * 100) {
           console.log('project error');
