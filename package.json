@@ -34,7 +34,7 @@
     "helmet": "^3.23.1",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
-    "mongoose": "^5.9.19",
+    "mongoose": "^5.13.20",
     "nodemailer": "^6.4.10",
     "razorpay": "^2.0.6",
     "ts-node-dev": "^1.0.0-pre.49",
